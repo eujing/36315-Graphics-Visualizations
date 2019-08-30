@@ -196,23 +196,31 @@ e. (30 points) Code is provided below to create some graphs in ggplot2 with the 
 ```{r}
 # First graph
 ggplot(Langren1644, aes(x = Country)) +
-  geom_bar(fill = "grey") 
+  geom_bar(fill = "lightblue") +
+  labs(
+    title = "Counts of each country",
+    caption = "Data from Langren1644"
+  )
 
 # Second graph
-ggplot(data = Langren1644, aes(x = Longitude, y = Latitude)) + 
-  geom_point(aes(color = 1))
+ggplot(data = Langren1644, aes(x = Longitude, y = Year)) + 
+  geom_point(aes(color = Country))
 
 # Third graph
 # update this code with changes you made in the second graph as well
-ggplot(data = Langren1644, aes(x = Longitude, y = Latitude)) + 
-  geom_point(aes(color = 1))
+ggplot(data = Langren1644, aes(x = Longitude, y = Year)) +
+  geom_point(aes(color = Country, shape = Source)) +
+  geom_vline(aes(xintercept = 12.5 + 4.03))
 
 # Fourth graphic
 # update this code with changes you made in the third graphic
-ggplot(data = Langren1644, aes(x = Longitude, y = Latitude)) + 
-  geom_point(aes(color = 1)) + 
-  geom_text(aes(label = Name), hjust = -0.05, 
-    vjust = -0.05, angle = -90)
+ggplot(data = Langren1644, aes(x = Longitude, y = Year)) +
+  geom_point(aes(color = Country, shape = Source)) +
+  geom_vline(aes(xintercept = 12.5 + 4.03)) +
+  geom_text(aes(label = Name), hjust = -0.05,
+    vjust = -0.05, angle = -90) +
+  labs(title = "Estimates of distance between Rome and Toledo",
+       subtitle = "Vertical line is the true distance")
 
 ```
 
@@ -222,15 +230,20 @@ ggplot(data = Langren1644, aes(x = Longitude, y = Latitude)) +
 
 + (10 points) In the second graph we observe a scatter plot of Longitude vs Latitude. Use `help(Langren1644)` to read about the variables in the `Langren1644` data, and briefly describe the axis of the plot. Next we will modify the plot. First, replace the variable `Latitude` with `Year`. In order to get more information to the plot we want to color the points in the scatter plot according to which country does the longitude estimate comes from. To achieve this use the `color` argument of the aesthetic mappings function `aes` and set it equal to the variable associated with country of origin (may need to look at `help(Langren1644)` again).
 
+
+ ‘Latitude’ Latitude of this ‘City’; a numeric vector
+ ‘Longitude’ Estimated value of the longitude distance between
+      Toledo and Rome
+
 + (5 points) With the third graph make it have the same updates of the second graph. To sqeeze in some more information, change the shape of the points according to the **source** of longitudinal measurement used. To do so mimic what you did in with the `color` parameter in `aes`, but this time do `aes(color = ..., shape = Source)`. Next, we will add a vertical line, indicating the true longitudinal distance between Toledo and Rome. To find this distance you can use Google, or `help(Langren1644)`. To add the vertical line we use  ` + geom_vline(aes(xintercept = _))` right after the `geom_point(...)`  where you should subtitude `_` with the longitudinal distance between Toledo and Rome. 
 
 
 + (10 points) With the fourth graph make it have the same updates of the third graph. Add title to this fourth plot describing the two main variables (be brief) and a subtitle with any additional variables plotted. Based on the new plot answer the following questions:
 
-    - Who gave the most precise estimate?
-    - Which country gave the most accurate estimates?
-    - Is the oldest estimate the worst? 
-    - Which source seems more accurate?
+    - Who gave the most precise estimate? G. Jansonius
+    - Which country gave the most accurate estimates? Flanders
+    - Is the oldest estimate the worst? No
+    - Which source seems more accurate? Map
 
 
 ***
@@ -315,6 +328,13 @@ plot(W, abssum2(x = Z, y = W),
 The graph looks like it is being roughly reflected around `W = 0`. This happens as when samples of the random variable $W < 0$, $|W|$ contributes positively to the sum $Z + |W|$ in a similar way as when $W \ge 0$.  
 
 h. (3 points) Use `ggplot2` to repeat the above plot. Don't worry whether the size of the points match the size of the points from part f. Optionally include titles and label the axis for this problem. (hint: assuming `W` and `Z` exist, you can create a data frame with `D <- data.frame(V1 = W, V2 = abssum2(x = Z, y = W))`; then use the knowledge from the commented code of Lab 01 and Homework 01, Problem 3 part e).
+
+```{r}
+D <- data.frame(V1 = W, V2 = abssum2(x = Z, y = W))
+ggplot(data = D, aes(x = V1, y = V2)) +
+    geom_point(aes(color = 1, shape = 16))
+```
+
 
 ***
 ***
