@@ -1,0 +1,301 @@
+---
+title: "36-315 Homework 01, Spring 2019"
+author: "Eu Jing Chua"
+date: "Due Wednesday, Jan 23, 2019 (11:59pm ET) on Canvas"
+output:
+  html_document:
+    toc:  true
+    toc_float:  true
+    code_folding:  show
+---
+
+## Introduction to `R`, RStudio, Data Types, and Critiquing Graphics
+
+***
+***
+
+
+***General instructions for all assignments***: 
+
++ Use this file as the template for your submission. Delete the unnecessary text (e.g. this text, the problem statements, etc). That said, keep the nicely formatted "Problem 1", "Problem 2", "a.", "b.", etc
++ Upload a single `R` Markdown file (named as: [AndrewID]-315-HW01.Rmd -- e.g. "mneykov-315-HW01.Rmd") to the Homework 01 submission section on Canvas. You do not need to upload the .html file.
++ The instructor and TAs will run your .Rmd file on their computers. **If your .Rmd file does not knit on our computers, you will be automatically be deducted 10 points.**
++ Your file should contain the code to answer each question in its own code block. Your code should produce plots/output that will be automatically embedded in the output (.html) file
++ Each answer must be supported by written statements (unless otherwise specified)
++ Include the name of anyone you collaborated with at the top of the assignment
+
+
+***
+***
+
+# Problem 1
+
+(12 points)
+
+**Downloading R and R Studio**: 
+
+If you are using your own, personal computer, you will need to download and install `R` and RStudio. Follow the instructions here to do so (be sure to choose the correct operating system, and 64-bit R if possible/compatible): [https://www.rstudio.com/products/rstudio/download/]
+
+Once you get RStudio open, download the Homework01.Rmd file from Canvas and open it in RStudio (File / Open...). We recommend using the Homework01.Rmd file on Canvas as a template for your submission. If you do, be sure to delete all of the problem statements and additional text, as these are not necessary to include in your submission.
+
+Notice how the text you write in the .Rmd file shows up in the output file each time you click "Knit HTML". 
+
+For more tips/tricks on how to format things in R Markdown, go to [https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf]
+
+**Customizing the RStudio User Interface**:
+
+The first thing you'll notice is that, in the RStudio window, there are several panes that contain various things (Console, Help, Environment, History, Plots, etc).
+
+If you're using Mac, go to RStudio / Preferences / Pane Layout. If you're using Windows, go to Tools / Global Options. Change the menu options to arrange the panes as you see fit. 
+
+**In your answer to this problem**, describe your chosen Pane Layout and give a brief explanation for why you chose this.
+
+Personally, Matey prefers to have:
+
++ Source in its own pane on the top-right-hand side
++ Console in it's own pane on the top-left-hand side of the window
++ Help on the bottom-left
++ Everything else on the bottom-right
+
+Click Apply. Now click Appearance and choose an appropriate font, font size, and theme. Fonts with fixed-width are typically more convenient for programming. 
+
+Click Apply and okay. Minimizing the bottom-left and bottom-right panes is a nice trick which gives more vertical space to see your code and the output it's generating. 
+
+
+**Where is my output file?**
+
+Find where you stored your [AndrewID]-315-HW01.Rmd file on your computer. 
+
+In the same directory, there should be a file called [AndrewID]-315-HW01.html. 
+
+Open it. It should automatically open in a browser, and it should contain the output. 
+
+
+**Additional Customization Advice** (not required):
+
++ Under Preferences / Code / Display, you might consider adding the margin column and setting it to 80 characters, since most style guides suggest that you should always keep lines of code at 80 characters or less when possible.
++ You can set your background color, font, font size, etc under Preferences / Appearance. Personally, Matey uses the "Idle Fingers" theme since it's easy on the eyes. Of course, this is strictly a personal preference, so you should choose something that you like.
++ Under Preferences / Packages, you can opt to change your CRAN mirror to the "Global (CDN) - RStudio" option, as it is very reliable.
++ Under Preferences / Git/SVN, you can configure your version control preferences. Although not required, I highly recommend that you use Git with RStudio. The interface is easy to use even if you're a beginner programmer or Git user. [This link](https://support.rstudio.com/hc/en-us/articles/200532077-Version-Control-with-Git-and-SVN) and [this link](https://jennybc.github.io/2014-05-12-ubc/ubc-r/session03_git.html) have more information on this, if you're interested (again, not required).
+
+I have a setup for working with RMarkdown using Neovim as my main editor. I use the plugin [NVim-R](https://github.com/jalvesaq/Nvim-R) to setup the knitting of PDF/HTML for me with hotkeys. The editor is split vertically into two, with the top for editting the Rmd file and the bottom as a R REPL that also outputs the success / failure messages of my knitting. When knitting to PDF, my PDF viewer Zathura automatically listens for changes to the PDF and updates accordingly, otherwise I use my regular browser to see my HTML output.
+
+***
+***
+
+# Problem 2
+
+(20 points)
+
+**Critiquing Graphs**:
+
+Find a graph from the internet (last 7 days -- e.g. a news article, blog post, etc) or from an academic journal (last 60 days). Describe and critique your graph using the suggestions below. In parts (b)-(d), you do not have to address each bullet below -- these are just suggestions of things you can discuss when describing/critiquing your graph.
+
+a. (5 points) **Include the graph in your assignment**. Two choices here: 
+
++ embed the graph/image in the .html file (see below for instructions) and submit it along with your other files on Canvas, or 
++ include a link to the graph in your answer to this question.
+
+![](https://i.redd.it/2jpjwrfcwdj31.jpg)
+
+b. (5 points) **Describe the graph**. 
+
++ What does the graph show? 
++ What variables are plotted on the axes, via color, or via other features of the graph?
++ **What is the main result of the graph?**
+
+The graph shows the density of occurance of earthquakes with magnitude above 5.5. The density is shown in terms of a heatmap overlaying the world map, where the color represents the density in the region.
+
+However, even though not fully visualized here, the main takeaway from the clustering of the earthquakes is that the patterns observed strongly correlate with the position of the tectonic plates, as seen below. Other than that, we can also see that there is much more activity in the plate boundaries in South East Asia, particularly around Indonesia, in comparison to all the other boundaries, assuming that red indicates higher density.
+
+![](https://www.worldatlas.com/r/w1200-h630-c1200x630/upload/bf/fc/49/earth-s-tectonic-plates.jpg)
+
+c. (5 points) **Critique the graph**.
+
++ Does the graph do a good job of achieving its goals? 
++ Does the graph use an unnecessary amount of data ink? 
++ Does the graph distort the actual effect/data/relationship? 
++ What are the strengths and weaknesses (if any) of the graphic? 
++ What would you change (if anything) about this graphic?
+
+With some assumptions, the graph does a good job at showing the relative density of earthquakes around the world. However, the lack of a colormap showing how the colors map to actual numerical values is a major weakness in this graphic. Without the mapping, we do not know if red indicates higher or lower density than blue etc., and can only rely on assumptions of what the colors mean.
+
+The strength of this graphic is that data was not distorted and had a clear relation to the layout of the world map. However, a weakness was the lack of numerical mapping. Going even further, I would add the tectonic plate boundaries to the map as it would be extra insightful as a comparison.
+
+d. (5 points) **Critique the caption and/or surrounding text**. 
+
++ Does the text enhance the user's understanding of the graphic? 
++ What else would you include in the caption/surrounding text to help the viewer understand the graphic?
+
+The text is not very helpful in enhancing the understanding of the graphic, other than pointing out that the density being plotted is one related to earthquakes. This is quite vague as the exact quantity is not described, whether it is a density of frequency of occurance or some other kind of density. The caption "Magnitude 5.5+" also leads us to believe that only earthquakes with magnitude above 5.5 were counted in this graphic, which is helpful in knowing that the patterns we observe are that of major earthquakes. I would make the main caption "EARTHQUAKE DENSITY" slighly more informative by describing what exact quantity the density is.
+
+***
+***
+
+# Problem 3
+
+(35 points)
+
+**Introduction to ggplot2**: 
+
+In `R`, there are several libraries or packages/groups of programs that are not permanently stored in `R`. One that will be particularly useful in our class is called `ggplot2`.
+
+a. (1 point) Type `library(ggplot2)` at the command line. Is the `ggplot2` package installed on your computer? If not, type `install.packages("ggplot2")`, then repeat the `library(ggplot2)` command above. 
+
+Note that the `ggplot2` library is contained within the `tidyverse` library from Lab 01. I recommend just using the `tidyverse` library from here on out (i.e., you should include `library(tidyverse)` at the beginning of all of your .Rmd files for this course).
+
+```{r}
+library(tidyverse)
+```
+
+
+b. (1 point) The Comprehensive R Archive Network, or CRAN, stores most publicly accessible, open-source R packages for anyone to use. Find CRAN's documentation on the `ggplot2` package (e.g. by searching "ggplot2 in R" on the internet). You should find a PDF document that has 216 pages of documentation about `ggplot2`. What does the "gg" in `ggplot2` stand for?
+
+It stands for Grammar of Graphics.
+
+c. (1 point) Who are the authors of the `ggplot2` package? Who is the maintainer of the `ggplot2` package? Search this person's name on the internet. What are some other `R` packages this person has written? (Just name a few.)
+
+        • Winston Chang
+
+        • Lionel Henry
+
+        • Thomas Lin Pedersen
+
+        • Kohske Takahashi
+
+        • Claus Wilke
+
+        • Kara Woo
+
+d. (2 points) **1644: Toledo to Rome**
+
+
+<div style = "width:500px">
+![](https://raw.githubusercontent.com/mateyneykov/315_code_data/master/images/Fig-1-Langrens-1644-graph-of-determinations-of-the-distance-in-longitude-from-Toledo.png)
+</div>
+
+Let's explore the data from the really early graphic examining predictions between Toledo and Rome that was visualized in 1644 by Langren.  Download and install package `HistData`. Load the `Langren1644` dataset into `R` by typing `data(Langren1644)`. What are the dimensions of this dataset? (hint: you may find the functions `dim`, `nrow`, `ncol` useful) What are the names of the columns? (use the function `colnames` or `names`)
+
+```{r, warning = FALSE, message = FALSE}
+library(tidyverse)
+library(HistData)
+library(forcats) # you will need to install this package first
+
+
+data(Langren1644)
+# Correction of a misspelling of "Italy " to "Italy" in the Langren1644 data.
+# The code collapses the two levels "Italy" and "Italy " of the factor variable
+Langren1644 <- Langren1644 %>% mutate(Country = fct_recode(Country,
+                                                           "Italy" = "Italy "))
+
+dim(Langren1644)
+colnames(Langren1644)
+```
+
+e. (30 points) Code is provided below to create some graphs in ggplot2 with the `Langren1644` dataset. Study the code carefully, then answer the questions below. It is also recommended to study the lab code in detail before you attempt this problem. 
+
+```{r}
+# First graph
+ggplot(Langren1644, aes(x = Country)) +
+  geom_bar(fill = "grey") 
+
+# Second graph
+ggplot(data = Langren1644, aes(x = Longitude, y = Latitude)) + 
+  geom_point(aes(color = 1))
+
+# Third graph
+# update this code with changes you made in the second graph as well
+ggplot(data = Langren1644, aes(x = Longitude, y = Latitude)) + 
+  geom_point(aes(color = 1))
+
+# Fourth graphic
+# update this code with changes you made in the third graphic
+ggplot(data = Langren1644, aes(x = Longitude, y = Latitude)) + 
+  geom_point(aes(color = 1)) + 
+  geom_text(aes(label = Name), hjust = -0.05, 
+    vjust = -0.05, angle = -90)
+
+```
+
+
++ (5 points) In the first graph, update the graphic by using light blue (`"lightblue"`) to color the bars, and add an appropriate title, and (if you want) add a caption specifying the source of the data (use the approach in Lab 01 to do this).
+
+
++ (10 points) In the second graph we observe a scatter plot of Longitude vs Latitude. Use `help(Langren1644)` to read about the variables in the `Langren1644` data, and briefly describe the axis of the plot. Next we will modify the plot. First, replace the variable `Latitude` with `Year`. In order to get more information to the plot we want to color the points in the scatter plot according to which country does the longitude estimate comes from. To achieve this use the `color` argument of the aesthetic mappings function `aes` and set it equal to the variable associated with country of origin (may need to look at `help(Langren1644)` again).
+
++ (5 points) With the third graph make it have the same updates of the second graph. To sqeeze in some more information, change the shape of the points according to the **source** of longitudinal measurement used. To do so mimic what you did in with the `color` parameter in `aes`, but this time do `aes(color = ..., shape = Source)`. Next, we will add a vertical line, indicating the true longitudinal distance between Toledo and Rome. To find this distance you can use Google, or `help(Langren1644)`. To add the vertical line we use  ` + geom_vline(aes(xintercept = _))` right after the `geom_point(...)`  where you should subtitude `_` with the longitudinal distance between Toledo and Rome. 
+
+
++ (10 points) With the fourth graph make it have the same updates of the third graph. Add title to this fourth plot describing the two main variables (be brief) and a subtitle with any additional variables plotted. Based on the new plot answer the following questions:
+
+    - Who gave the most precise estimate?
+    - Which country gave the most accurate estimates?
+    - Is the oldest estimate the worst? 
+    - Which source seems more accurate?
+
+
+***
+***
+
+
+# Problem 4
+
+(23 points)
+
+**Writing R Functions and Working with Vectors**: 
+
+Read section 5 of Wasserman's R Intro document on Canvas about writing functions in R. Functions help us reuse code and enhance the reproduciblity of our code.
+
+a. (2 points) Write an R function called `abssum` that takes four inputs -- `a`, `b`, `x`, and `y` and returns the quantity $ax + b|y|$.
+
+b. (2 points) Test your function and demonstrate that it works for at least three different combinations of the parameters.
+
+c. (2 points) Type `abssum(x = 1, y = 1)` into your code block. What happens when you only specify these two arguments? (Note: When knitting your document for submission, comment this line of code out, so that it does not produce an error.)
+
+d. (2 points) Create a new function, `abssum2`, that has default values for `a = 1`, `b = 1`. Type `abssum2(x = 1, y = 1)` into your code block. What happens when you only specify the two arguments now?
+
+e. (2 points) Type `1:10` at the command line in `R`. What happens? 
+
+f. (2 points) What happens when you call the function with the following input: `abssum2(x = 1:10, y = 1:10)`. Why does this happen?
+
+g. (8 points) Use `help(rnorm)` to learn about the function `rnorm` which generates normal random variables. Generate 5000 independent standard normal random variables and assign them to `Z`. Repeat the same procedure and assign the new values to `W`. Type `plot(W, abssum2(x = Z, y = W), cex = .5, pch = 16, xlab = "W", ylab = "Z + |W|")`. Describe the graph that shows up, and explain why this happens. 
+
+h. (3 points) Use `ggplot2` to repeat the above plot. Don't worry whether the size of the points match the size of the points from part f. Optionally include titles and label the axis for this problem. (hint: assuming `W` and `Z` exist, you can create a data frame with `D <- data.frame(V1 = W, V2 = abssum2(x = Z, y = W))`; then use the knowledge from the commented code of Lab 01 and Homework 01, Problem 3 part e).
+
+***
+***
+
+
+# Problem 5
+
+(5 points)
+
+**Enroll in Piazza for 36-315**:
+
+All questions about homeworks, labs, the lab exam, projects, course material, etc should be posted to the discussion board on Piazza. 
+
+a. (1 points) If you're not already signed up, enrolled in our Piazza course [here](https://piazza.com/cmu/fall2018/36315). Alternatively, you can sign-up and view Piazza via the class Canvas. **IT IS CRITICAL THAT YOU ENROLL IN THE COURSE ON PIAZZA.** Important course discussion and information will only be distributed via Piazza. You are responsible for understanding all content that is posted to Piazza. 
+
+b. (0 points) On the course Piazza page, in the top-right corner, click the Settings gear/wheel icon. Under Account & Email Settings, click Edit Email Notifications. I recommend choosing Real Time for both parts and checking the "Automatically follow every question and note" checkbox. 
+
+c. (2 points) Write the following sentence: "I certify that I understand that I am responsible for reading and understanding all material and content posted on the course Piazza page."
+
+d. (2 points) Write the following sentence: "I certify that I will not abuse the use of anonymous posting on the course Piazza page."
+
+
+***
+***
+
+
+# Problem 6
+
+(5 points)
+
+**Consent to Use Lab Solutions**:
+
+If you do very well on a lab, we would like to post your solutions for that lab assignment to Canvas for other students to see. Posted solutions will, of course, be anonymized, so that other students will not know that the solutions are yours. We will not post homework or lab exam solutions to Canvas.
+
+You are welcome to opt out of this if you want to. Just answer the following question: Do you consent to having your (anonymized) lab solutions posted to Canvas? (Just type "Yes", or "No".)
+
+(You will receive 5 points regardless of what you answer -- we just need to know ahead of time!)
+
