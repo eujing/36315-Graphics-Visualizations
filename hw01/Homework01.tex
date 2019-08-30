@@ -273,13 +273,13 @@ contain the output.
 
 I have a setup for working with RMarkdown using Neovim as my main
 editor. I use the plugin
-\includegraphics{https://github.com/jalvesaq/Nvim-R} to setup the
-knitting of PDF/HTML for me with hotkeys. The editor is split vertically
-into two, with the top for editting the Rmd file and the bottom as a R
-REPL that also outputs the success / failure messages of my knitting.
-When knitting to PDF, my PDF viewer Zathura automatically listens for
-changes to the PDF and updates accordingly, otherwise I use my regular
-browser to see my HTML output.
+\href{https://github.com/jalvesaq/Nvim-R}{NVim-R} to setup the knitting
+of PDF/HTML for me with hotkeys. The editor is split vertically into
+two, with the top for editting the Rmd file and the bottom as a R REPL
+that also outputs the success / failure messages of my knitting. When
+knitting to PDF, my PDF viewer Zathura automatically listens for changes
+to the PDF and updates accordingly, otherwise I use my regular browser
+to see my HTML output.
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
@@ -315,6 +315,8 @@ of things you can discuss when describing/critiquing your graph.
   include a link to the graph in your answer to this question.
 \end{itemize}
 
+\includegraphics{https://i.redd.it/2jpjwrfcwdj31.jpg}
+
 \begin{enumerate}
 \def\labelenumi{\alph{enumi}.}
 \setcounter{enumi}{1}
@@ -333,6 +335,20 @@ of things you can discuss when describing/critiquing your graph.
 \item
   \textbf{What is the main result of the graph?}
 \end{itemize}
+
+The graph shows the density of occurance of earthquakes with magnitude
+above 5.5. The density is shown in terms of a heatmap overlaying the
+world map, where the color represents the density in the region.
+
+However, even though not fully visualized here, the main takeaway from
+the clustering of the earthquakes is that the patterns observed strongly
+correlate with the position of the tectonic plates, as seen below. Other
+than that, we can also see that there is much more activity in the plate
+boundaries in South East Asia, particularly around Indonesia, in
+comparison to all the other boundaries, assuming that red indicates
+higher density.
+
+\includegraphics{https://www.worldatlas.com/r/w1200-h630-c1200x630/upload/bf/fc/49/earth-s-tectonic-plates.jpg}
 
 \begin{enumerate}
 \def\labelenumi{\alph{enumi}.}
@@ -356,6 +372,19 @@ of things you can discuss when describing/critiquing your graph.
   What would you change (if anything) about this graphic?
 \end{itemize}
 
+With some assumptions, the graph does a good job at showing the relative
+density of earthquakes around the world. However, the lack of a colormap
+showing how the colors map to actual numerical values is a major
+weakness in this graphic. Without the mapping, we do not know if red
+indicates higher or lower density than blue etc., and can only rely on
+assumptions of what the colors mean.
+
+The strength of this graphic is that data was not distorted and had a
+clear relation to the layout of the world map. However, a weakness was
+the lack of numerical mapping. Going even further, I would add the
+tectonic plate boundaries to the map as it would be extra insightful as
+a comparison.
+
 \begin{enumerate}
 \def\labelenumi{\alph{enumi}.}
 \setcounter{enumi}{3}
@@ -373,14 +402,16 @@ of things you can discuss when describing/critiquing your graph.
   the viewer understand the graphic?
 \end{itemize}
 
-To include an image from the internet in your \texttt{R} Markdown
-output, use the following code (adjust the width and height as
-necessary):
-
-(Note: If you're viewing the .html file, you'll see CMU's logo below;
-the code to render this image is in the .Rmd file.)
-
-\includegraphics{https://upload.wikimedia.org/wikipedia/en/thumb/b/bb/Carnegie_Mellon_University_seal.svg/1024px-Carnegie_Mellon_University_seal.svg.png}
+The text is not very helpful in enhancing the understanding of the
+graphic, other than pointing out that the density being plotted is one
+related to earthquakes. This is quite vague as the exact quantity is not
+described, whether it is a density of frequency of occurance or some
+other kind of density. The caption ``Magnitude 5.5+'' also leads us to
+believe that only earthquakes with magnitude above 5.5 were counted in
+this graphic, which is helpful in knowing that the patterns we observe
+are that of major earthquakes. I would make the main caption
+``EARTHQUAKE DENSITY'' slighly more informative by describing what exact
+quantity the density is.
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
@@ -413,9 +444,16 @@ Note that the \texttt{ggplot2} library is contained within the
 \texttt{library(tidyverse)} at the beginning of all of your .Rmd files
 for this course).
 
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(tidyverse)}
+\end{Highlighting}
+\end{Shaded}
+
 \begin{enumerate}
 \def\labelenumi{\alph{enumi}.}
 \setcounter{enumi}{1}
+\tightlist
 \item
   (1 point) The Comprehensive R Archive Network, or CRAN, stores most
   publicly accessible, open-source R packages for anyone to use. Find
@@ -423,11 +461,46 @@ for this course).
   searching ``ggplot2 in R'' on the internet). You should find a PDF
   document that has 216 pages of documentation about \texttt{ggplot2}.
   What does the ``gg'' in \texttt{ggplot2} stand for?
+\end{enumerate}
+
+It stands for Grammar of Graphics.
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\setcounter{enumi}{2}
+\tightlist
 \item
   (1 point) Who are the authors of the \texttt{ggplot2} package? Who is
   the maintainer of the \texttt{ggplot2} package? Search this person's
   name on the internet. What are some other \texttt{R} packages this
   person has written? (Just name a few.)
+\end{enumerate}
+
+The authors are:
+
+\begin{itemize}
+\tightlist
+\item
+  Winston Chang
+\item
+  Lionel Henry
+\item
+  Thomas Lin Pedersen
+\item
+  Kohske Takahashi
+\item
+  Claus Wilke
+\item
+  Kara Woo
+\end{itemize}
+
+The maintainer is Hadly Wickham. He has written things like
+\texttt{dyplr} and \texttt{lubridate}.
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\setcounter{enumi}{3}
+\tightlist
 \item
   (2 points) \textbf{1644: Toledo to Rome}
 \end{enumerate}
@@ -455,8 +528,25 @@ function \texttt{colnames} or \texttt{names})
 \CommentTok{# The code collapses the two levels "Italy" and "Italy " of the factor variable}
 \NormalTok{Langren1644 <-}\StringTok{ }\NormalTok{Langren1644 }\OperatorTok{%>%}\StringTok{ }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{Country =} \KeywordTok{fct_recode}\NormalTok{(Country,}
                                                            \StringTok{"Italy"}\NormalTok{ =}\StringTok{ "Italy "}\NormalTok{))}
+
+\KeywordTok{dim}\NormalTok{(Langren1644)}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{verbatim}
+## [1] 12  9
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{colnames}\NormalTok{(Langren1644)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Name"      "Longitude" "Year"      "Longname"  "City"      "Country"  
+## [7] "Latitude"  "Source"    "Gap"
+\end{verbatim}
 
 \begin{enumerate}
 \def\labelenumi{\alph{enumi}.}
@@ -477,7 +567,7 @@ function \texttt{colnames} or \texttt{names})
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{Homework01_files/figure-latex/unnamed-chunk-2-1.pdf}
+\includegraphics{Homework01_files/figure-latex/unnamed-chunk-3-1.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -487,7 +577,7 @@ function \texttt{colnames} or \texttt{names})
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{Homework01_files/figure-latex/unnamed-chunk-2-2.pdf}
+\includegraphics{Homework01_files/figure-latex/unnamed-chunk-3-2.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -498,7 +588,7 @@ function \texttt{colnames} or \texttt{names})
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{Homework01_files/figure-latex/unnamed-chunk-2-3.pdf}
+\includegraphics{Homework01_files/figure-latex/unnamed-chunk-3-3.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -511,7 +601,7 @@ function \texttt{colnames} or \texttt{names})
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{Homework01_files/figure-latex/unnamed-chunk-2-4.pdf}
+\includegraphics{Homework01_files/figure-latex/unnamed-chunk-3-4.pdf}
 
 \begin{itemize}
 \item
@@ -580,30 +670,155 @@ reproduciblity of our code.
 
 \begin{enumerate}
 \def\labelenumi{\alph{enumi}.}
+\tightlist
 \item
   (2 points) Write an R function called \texttt{abssum} that takes four
   inputs -- \texttt{a}, \texttt{b}, \texttt{x}, and \texttt{y} and
   returns the quantity \(ax + b|y|\).
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{abssum <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(a, b, x, y) \{}
+    \KeywordTok{return}\NormalTok{(a }\OperatorTok{*}\StringTok{ }\NormalTok{x }\OperatorTok{+}\StringTok{ }\NormalTok{b }\OperatorTok{*}\StringTok{ }\KeywordTok{abs}\NormalTok{(y))}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
 \item
   (2 points) Test your function and demonstrate that it works for at
   least three different combinations of the parameters.
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{abssum}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{) }\OperatorTok{==}\StringTok{ }\DecValTok{0}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] TRUE
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{abssum}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{3}\NormalTok{, }\DecValTok{4}\NormalTok{) }\OperatorTok{==}\StringTok{ }\DecValTok{11}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] TRUE
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{abssum}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{3}\NormalTok{, }\DecValTok{-4}\NormalTok{) }\OperatorTok{==}\StringTok{ }\DecValTok{11}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] TRUE
+\end{verbatim}
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\setcounter{enumi}{2}
+\tightlist
 \item
   (2 points) Type \texttt{abssum(x\ =\ 1,\ y\ =\ 1)} into your code
   block. What happens when you only specify these two arguments? (Note:
   When knitting your document for submission, comment this line of code
   out, so that it does not produce an error.)
+\end{enumerate}
+
+We get an error
+\texttt{Error\ in\ abssum(x\ =\ 1,\ y\ =\ 1)\ :\ argument\ "a"\ is\ missing,\ with\ no\ default}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# abssum(x = 1, y = 1)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\setcounter{enumi}{3}
+\tightlist
 \item
   (2 points) Create a new function, \texttt{abssum2}, that has default
   values for \texttt{a\ =\ 1}, \texttt{b\ =\ 1}. Type
   \texttt{abssum2(x\ =\ 1,\ y\ =\ 1)} into your code block. What happens
   when you only specify the two arguments now?
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{abssum2 <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(}\DataTypeTok{a =} \DecValTok{1}\NormalTok{, }\DataTypeTok{b =} \DecValTok{1}\NormalTok{, x, y) \{}
+    \KeywordTok{return}\NormalTok{(a }\OperatorTok{*}\StringTok{ }\NormalTok{x }\OperatorTok{+}\StringTok{ }\NormalTok{b }\OperatorTok{*}\StringTok{ }\KeywordTok{abs}\NormalTok{(y))}
+\NormalTok{\}}
+
+\KeywordTok{abssum2}\NormalTok{(}\DataTypeTok{x =} \DecValTok{1}\NormalTok{, }\DataTypeTok{y =} \DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 2
+\end{verbatim}
+
+The code does not fail now, and uses the default values.
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\setcounter{enumi}{4}
+\tightlist
 \item
   (2 points) Type \texttt{1:10} at the command line in \texttt{R}. What
   happens?
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DecValTok{1}\OperatorTok{:}\DecValTok{10}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  [1]  1  2  3  4  5  6  7  8  9 10
+\end{verbatim}
+
+We get a vector from 1 to 10 inclusive.
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\setcounter{enumi}{5}
+\tightlist
 \item
   (2 points) What happens when you call the function with the following
   input: \texttt{abssum2(x\ =\ 1:10,\ y\ =\ 1:10)}. Why does this
   happen?
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{abssum2}\NormalTok{(}\DataTypeTok{x =} \DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{, }\DataTypeTok{y =} \DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  [1]  2  4  6  8 10 12 14 16 18 20
+\end{verbatim}
+
+The function works in a vectorized manner as the numerical operators in
+R can work in a vectorized manner too.
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\setcounter{enumi}{6}
+\tightlist
 \item
   (8 points) Use \texttt{help(rnorm)} to learn about the function
   \texttt{rnorm} which generates normal random variables. Generate 5000
@@ -612,16 +827,31 @@ reproduciblity of our code.
   \texttt{W}. Type
   \texttt{plot(W,\ abssum2(x\ =\ Z,\ y\ =\ W),\ cex\ =\ .5,\ pch\ =\ 16,\ xlab\ =\ "W",\ ylab\ =\ "Z\ +\ \textbar{}W\textbar{}")}.
   Describe the graph that shows up, and explain why this happens.
-\item
-  (3 points) Use \texttt{ggplot2} to repeat the above plot. Don't worry
-  whether the size of the points match the size of the points from part
-  f.~Optionally include titles and label the axis for this problem.
-  (hint: assuming \texttt{W} and \texttt{Z} exist, you can create a data
-  frame with
-  \texttt{D\ \textless{}-\ data.frame(V1\ =\ W,\ V2\ =\ abssum2(x\ =\ Z,\ y\ =\ W))};
-  then use the knowledge from the commented code of Lab 01 and Homework
-  01, Problem 3 part e).
 \end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Z <-}\StringTok{ }\KeywordTok{rnorm}\NormalTok{(}\DecValTok{5000}\NormalTok{)}
+\NormalTok{W <-}\StringTok{ }\KeywordTok{rnorm}\NormalTok{(}\DecValTok{5000}\NormalTok{)}
+
+\KeywordTok{plot}\NormalTok{(W, }\KeywordTok{abssum2}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ Z, }\DataTypeTok{y =}\NormalTok{ W),}
+     \DataTypeTok{cex =} \FloatTok{0.5}\NormalTok{, }\DataTypeTok{pch =} \DecValTok{16}\NormalTok{, }\DataTypeTok{xlab =} \StringTok{"W"}\NormalTok{, }\DataTypeTok{ylab =} \StringTok{"Z + |W|"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Homework01_files/figure-latex/unnamed-chunk-10-1.pdf}
+
+The graph looks like it is being roughly reflected around
+\texttt{W\ =\ 0}. This happens as when samples of the random variable
+\(W < 0\), \(|W|\) contributes positively to the sum \(Z + |W|\) in a
+similar way as when \(W \ge 0\). h. (3 points) Use \texttt{ggplot2} to
+repeat the above plot. Don't worry whether the size of the points match
+the size of the points from part f.~Optionally include titles and label
+the axis for this problem. (hint: assuming \texttt{W} and \texttt{Z}
+exist, you can create a data frame with
+\texttt{D\ \textless{}-\ data.frame(V1\ =\ W,\ V2\ =\ abssum2(x\ =\ Z,\ y\ =\ W))};
+then use the knowledge from the commented code of Lab 01 and Homework
+01, Problem 3 part e).
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 

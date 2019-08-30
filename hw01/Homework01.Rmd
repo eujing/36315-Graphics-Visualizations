@@ -155,17 +155,16 @@ It stands for Grammar of Graphics.
 
 c. (1 point) Who are the authors of the `ggplot2` package? Who is the maintainer of the `ggplot2` package? Search this person's name on the internet. What are some other `R` packages this person has written? (Just name a few.)
 
-        • Winston Chang
+The authors are:
 
-        • Lionel Henry
++ Winston Chang
++ Lionel Henry
++ Thomas Lin Pedersen
++ Kohske Takahashi
++ Claus Wilke
++ Kara Woo
 
-        • Thomas Lin Pedersen
-
-        • Kohske Takahashi
-
-        • Claus Wilke
-
-        • Kara Woo
+The maintainer is Hadly Wickham. He has written things like `dyplr` and `lubridate`.
 
 d. (2 points) **1644: Toledo to Rome**
 
@@ -248,17 +247,72 @@ Read section 5 of Wasserman's R Intro document on Canvas about writing functions
 
 a. (2 points) Write an R function called `abssum` that takes four inputs -- `a`, `b`, `x`, and `y` and returns the quantity $ax + b|y|$.
 
+```{r}
+abssum <- function(a, b, x, y) {
+    return(a * x + b * abs(y))
+}
+```
+
+
 b. (2 points) Test your function and demonstrate that it works for at least three different combinations of the parameters.
+
+```{r}
+abssum(0, 0, 0, 0) == 0
+abssum(1, 2, 3, 4) == 11
+abssum(1, 2, 3, -4) == 11
+```
+
 
 c. (2 points) Type `abssum(x = 1, y = 1)` into your code block. What happens when you only specify these two arguments? (Note: When knitting your document for submission, comment this line of code out, so that it does not produce an error.)
 
+We get an error `Error in abssum(x = 1, y = 1) : argument "a" is missing, with no default`
+
+```{r}
+# abssum(x = 1, y = 1)
+```
+
+
 d. (2 points) Create a new function, `abssum2`, that has default values for `a = 1`, `b = 1`. Type `abssum2(x = 1, y = 1)` into your code block. What happens when you only specify the two arguments now?
+
+```{r}
+abssum2 <- function(a = 1, b = 1, x, y) {
+    return(a * x + b * abs(y))
+}
+
+abssum2(x = 1, y = 1)
+```
+
+The code does not fail now, and uses the default values.
 
 e. (2 points) Type `1:10` at the command line in `R`. What happens? 
 
+```{r}
+1:10
+```
+
+We get a vector from 1 to 10 inclusive.
+
+
 f. (2 points) What happens when you call the function with the following input: `abssum2(x = 1:10, y = 1:10)`. Why does this happen?
 
+```{r}
+abssum2(x = 1:10, y = 1:10)
+```
+
+The function works in a vectorized manner as the numerical operators in R can work in a vectorized manner too.
+
+
 g. (8 points) Use `help(rnorm)` to learn about the function `rnorm` which generates normal random variables. Generate 5000 independent standard normal random variables and assign them to `Z`. Repeat the same procedure and assign the new values to `W`. Type `plot(W, abssum2(x = Z, y = W), cex = .5, pch = 16, xlab = "W", ylab = "Z + |W|")`. Describe the graph that shows up, and explain why this happens. 
+
+```{r}
+Z <- rnorm(5000)
+W <- rnorm(5000)
+
+plot(W, abssum2(x = Z, y = W),
+     cex = 0.5, pch = 16, xlab = "W", ylab = "Z + |W|")
+```
+
+The graph looks like it is being roughly reflected around `W = 0`. This happens as when samples of the random variable $W < 0$, $|W|$ contributes positively to the sum $Z + |W|$ in a similar way as when $W \ge 0$.  
 
 h. (3 points) Use `ggplot2` to repeat the above plot. Don't worry whether the size of the points match the size of the points from part f. Optionally include titles and label the axis for this problem. (hint: assuming `W` and `Z` exist, you can create a data frame with `D <- data.frame(V1 = W, V2 = abssum2(x = Z, y = W))`; then use the knowledge from the commented code of Lab 01 and Homework 01, Problem 3 part e).
 
@@ -280,8 +334,11 @@ b. (0 points) On the course Piazza page, in the top-right corner, click the Sett
 
 c. (2 points) Write the following sentence: "I certify that I understand that I am responsible for reading and understanding all material and content posted on the course Piazza page."
 
+I certify that I understand that I am responsible for reading and understanding all material and content posted on the course Piazza page.
+
 d. (2 points) Write the following sentence: "I certify that I will not abuse the use of anonymous posting on the course Piazza page."
 
+I certify that I will not abuse the use of anonymous posting on the course Piazza page.
 
 ***
 ***
@@ -299,3 +356,4 @@ You are welcome to opt out of this if you want to. Just answer the following que
 
 (You will receive 5 points regardless of what you answer -- we just need to know ahead of time!)
 
+Yes
