@@ -32,53 +32,9 @@ output:
 
 (12 points)
 
-**Downloading R and R Studio**: 
-
-If you are using your own, personal computer, you will need to download and install `R` and RStudio. Follow the instructions here to do so (be sure to choose the correct operating system, and 64-bit R if possible/compatible): [https://www.rstudio.com/products/rstudio/download/]
-
-Once you get RStudio open, download the Homework01.Rmd file from Canvas and open it in RStudio (File / Open...). We recommend using the Homework01.Rmd file on Canvas as a template for your submission. If you do, be sure to delete all of the problem statements and additional text, as these are not necessary to include in your submission.
-
-Notice how the text you write in the .Rmd file shows up in the output file each time you click "Knit HTML". 
-
-For more tips/tricks on how to format things in R Markdown, go to [https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf]
-
-**Customizing the RStudio User Interface**:
-
-The first thing you'll notice is that, in the RStudio window, there are several panes that contain various things (Console, Help, Environment, History, Plots, etc).
-
-If you're using Mac, go to RStudio / Preferences / Pane Layout. If you're using Windows, go to Tools / Global Options. Change the menu options to arrange the panes as you see fit. 
-
 **In your answer to this problem**, describe your chosen Pane Layout and give a brief explanation for why you chose this.
 
-Personally, Matey prefers to have:
-
-+ Source in its own pane on the top-right-hand side
-+ Console in it's own pane on the top-left-hand side of the window
-+ Help on the bottom-left
-+ Everything else on the bottom-right
-
-Click Apply. Now click Appearance and choose an appropriate font, font size, and theme. Fonts with fixed-width are typically more convenient for programming. 
-
-Click Apply and okay. Minimizing the bottom-left and bottom-right panes is a nice trick which gives more vertical space to see your code and the output it's generating. 
-
-
-**Where is my output file?**
-
-Find where you stored your [AndrewID]-315-HW01.Rmd file on your computer. 
-
-In the same directory, there should be a file called [AndrewID]-315-HW01.html. 
-
-Open it. It should automatically open in a browser, and it should contain the output. 
-
-
-**Additional Customization Advice** (not required):
-
-+ Under Preferences / Code / Display, you might consider adding the margin column and setting it to 80 characters, since most style guides suggest that you should always keep lines of code at 80 characters or less when possible.
-+ You can set your background color, font, font size, etc under Preferences / Appearance. Personally, Matey uses the "Idle Fingers" theme since it's easy on the eyes. Of course, this is strictly a personal preference, so you should choose something that you like.
-+ Under Preferences / Packages, you can opt to change your CRAN mirror to the "Global (CDN) - RStudio" option, as it is very reliable.
-+ Under Preferences / Git/SVN, you can configure your version control preferences. Although not required, I highly recommend that you use Git with RStudio. The interface is easy to use even if you're a beginner programmer or Git user. [This link](https://support.rstudio.com/hc/en-us/articles/200532077-Version-Control-with-Git-and-SVN) and [this link](https://jennybc.github.io/2014-05-12-ubc/ubc-r/session03_git.html) have more information on this, if you're interested (again, not required).
-
-I have a setup for working with RMarkdown using Neovim as my main editor. I use the plugin [NVim-R](https://github.com/jalvesaq/Nvim-R) to setup the knitting of PDF/HTML for me with hotkeys. The editor is split vertically into two, with the top for editting the Rmd file and the bottom as a R REPL that also outputs the success / failure messages of my knitting. When knitting to PDF, my PDF viewer Zathura automatically listens for changes to the PDF and updates accordingly, otherwise I use my regular browser to see my HTML output.
+I have a setup for working with RMarkdown using Neovim as my main editor. I use the plugin [NVim-R](https://github.com/jalvesaq/Nvim-R) to setup the knitting of PDF/HTML for me with hotkeys. The editor is split vertically into two, with the top for editting the Rmd file and the bottom as a R REPL that also outputs the success / failure messages of my knitting. When knitting to PDF, my PDF viewer Zathura automatically listens for changes to the PDF and updates accordingly, otherwise I use my regular browser to see my HTML output. I use this setup as I am most comfortable using vim-style editing and this has worked out well for me through classes like 401 and 402.
 
 ***
 ***
@@ -100,10 +56,6 @@ a. (5 points) **Include the graph in your assignment**. Two choices here:
 
 b. (5 points) **Describe the graph**. 
 
-+ What does the graph show? 
-+ What variables are plotted on the axes, via color, or via other features of the graph?
-+ **What is the main result of the graph?**
-
 The graph shows the density of occurance of earthquakes with magnitude above 5.5. The density is shown in terms of a heatmap overlaying the world map, where the color represents the density in the region.
 
 However, even though not fully visualized here, the main takeaway from the clustering of the earthquakes is that the patterns observed strongly correlate with the position of the tectonic plates, as seen below. Other than that, we can also see that there is much more activity in the plate boundaries in South East Asia, particularly around Indonesia, in comparison to all the other boundaries, assuming that red indicates higher density.
@@ -112,20 +64,11 @@ However, even though not fully visualized here, the main takeaway from the clust
 
 c. (5 points) **Critique the graph**.
 
-+ Does the graph do a good job of achieving its goals? 
-+ Does the graph use an unnecessary amount of data ink? 
-+ Does the graph distort the actual effect/data/relationship? 
-+ What are the strengths and weaknesses (if any) of the graphic? 
-+ What would you change (if anything) about this graphic?
-
 With some assumptions, the graph does a good job at showing the relative density of earthquakes around the world. However, the lack of a colormap showing how the colors map to actual numerical values is a major weakness in this graphic. Without the mapping, we do not know if red indicates higher or lower density than blue etc., and can only rely on assumptions of what the colors mean.
 
 The strength of this graphic is that data was not distorted and had a clear relation to the layout of the world map. However, a weakness was the lack of numerical mapping. Going even further, I would add the tectonic plate boundaries to the map as it would be extra insightful as a comparison.
 
 d. (5 points) **Critique the caption and/or surrounding text**. 
-
-+ Does the text enhance the user's understanding of the graphic? 
-+ What else would you include in the caption/surrounding text to help the viewer understand the graphic?
 
 The text is not very helpful in enhancing the understanding of the graphic, other than pointing out that the density being plotted is one related to earthquakes. This is quite vague as the exact quantity is not described, whether it is a density of frequency of occurance or some other kind of density. The caption "Magnitude 5.5+" also leads us to believe that only earthquakes with magnitude above 5.5 were counted in this graphic, which is helpful in knowing that the patterns we observe are that of major earthquakes. I would make the main caption "EARTHQUAKE DENSITY" slighly more informative by describing what exact quantity the density is.
 
@@ -137,8 +80,6 @@ The text is not very helpful in enhancing the understanding of the graphic, othe
 (35 points)
 
 **Introduction to ggplot2**: 
-
-In `R`, there are several libraries or packages/groups of programs that are not permanently stored in `R`. One that will be particularly useful in our class is called `ggplot2`.
 
 a. (1 point) Type `library(ggplot2)` at the command line. Is the `ggplot2` package installed on your computer? If not, type `install.packages("ggplot2")`, then repeat the `library(ggplot2)` command above. 
 
@@ -332,7 +273,8 @@ h. (3 points) Use `ggplot2` to repeat the above plot. Don't worry whether the si
 ```{r}
 D <- data.frame(V1 = W, V2 = abssum2(x = Z, y = W))
 ggplot(data = D, aes(x = V1, y = V2)) +
-    geom_point(aes(color = 1, shape = 16))
+    geom_point(shape = 16) +
+    labs(x = "W", y = "Z + |W|")
 ```
 
 
