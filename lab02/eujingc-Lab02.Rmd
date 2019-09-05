@@ -1,0 +1,223 @@
+---
+title: "36-315 Lab 02"
+author: "Eu Jing Chua"
+date: "Due Friday, Sept 06, 2019 (6:30pm)"
+output: 
+  html_document:
+    toc:  true
+    toc_float:  true
+    code_folding:  show
+---
+
+
+##  Lab 02:  Titanic!
+
+#  Problem 1
+
+(23 points)
+
+```{r, warning = FALSE, message = FALSE}
+#  Load the tidyverse package into R
+#  Be sure that this package is installed first!
+library(tidyverse)
+
+#  Load the data into R
+titanic <- read_csv("https://raw.githubusercontent.com/mateyneykov/315_code_data/master/data/titanic.csv")
+```
+
+a. (4 points) How many rows and columns does the data have?  (Hint:  `help(nrow)`, `help(ncol)`, `help(dim)`)
+
+There are 712 rows and 12 columns.
+
+b. (5 points)  Which variables are categorical?  (Name at least two.)
+
+The categorical variables are `survival`, `pclass`, `sex` and `embarked`.
+
+
+c. (5 points) Which are continuous?  (Name at least two.)
+
+The continuous variables are `Age`, `sibsp`, `parch` and `fare`.
+
+d. (4 points) Which, if any, of the categorical variables are ordered?  (Name one.)
+
+An ordered variable is `pclass`.
+
+e. (5 points) Which, if any, of these variables could be seen as categorical and continuous depending upon the situtation (Name one). Explain your choice.
+
+One such variable could be `fare`. If there are only a few fixed fares, one per ticket class for example, then it would be categorical. However, if fares varied much more by person because of variations across time or discounts, then fares would be more continuous.
+
+(Hint:  If you print out the `data_frame` after using `read_csv()` to read it in, the data types of each variable are shown.  This will also show the number of rows and columns.)
+
+```{r}
+#  Put your code to answer the questions above here!
+dim(titanic)
+titanic
+```
+
+
+
+***
+***
+
+
+#  Problem 2
+
+**Exploratory Data Analysis -- Part 1 -- Examining Categorical Variables**
+
+a.  (5 points)  How many unique values of these two variables (`Embarked` and `Pclass`) are there?  What are the unique values? Provide a **single sentence** describing what they actually mean.
+
+```{r}
+unique(titanic$Embarked)
+unique(titanic$Pclass)
+```
+
+There are 3 unique values for each variable. The `Embarked` values represent the port of embarkment and the `PClass` values represent the ticket classes.
+
+
+b.  (10 points)  How many of each unique value are there?  To find this out, use the following approach, which counts the number of times each category appears in a vector:
+
+```{r}
+titanic %>%
+  group_by(Embarked) %>%
+  summarize(count = n())
+
+titanic %>%
+  group_by(Pclass) %>%
+  summarize(count = n())
+```
+
+***
+***
+
+
+#  Problem 3
+
+(5 points each)
+
+**Exploratory Data Analysis -- Part 2 -- Visualizing Cateogical Variables**
+
+a.  Create a bar chart that shows the distribution of the number of individuals that Embarked at each specific port as mentioned in our `titanic` dataset.  The x-axis should show the unique Embarkeds.  The y-axis should show the number of passengers that embarked at each port.  To do this, create a base plot with:  `Embarked_dist_plot <- ggplot(data = titanic, aes(x = Embarked))`.  Then type `Embarked_dist_plot + geom_bar() + coord_cartesian()`.   
+
+```{r}
+ggplot(data = titanic, aes(x = Embarked)) +
+    geom_bar() +
+    coord_cartesian()
+```
+
+
+b.  That graph is okay, but let's add a little color.  Recall that, the color used to "fill" the bars is one of the "aesthetics" of the graph that we can specify.  So, all we need to do is add the color aesthetic to our previous command:  `Embarked_dist_plot + geom_bar(aes(fill = Embarked)) + coord_cartesian()`.  (This will `fill` the bars in with different colors corresponding to each unique `Embarked`.)  Notice that `ggplot` adds a legend to our plot automatically.  We'll learn about how to specify different colors on a future assignment.  That said, feel free to look up how to do this and change the color scheme here!
+
+```{r}
+ggplot(data = titanic, aes(x = Embarked)) +
+    geom_bar(aes(fill = Embarked)) +
+    coord_cartesian()
+```
+
+c.  Recall that **aesthetics map pieces of the data to parts of the graph**.  In part (b) above, we mapped the `Embarked` variable to fill color (`fill`) of the bars in our bar chart using the `aes()` function.  We can also fill the bars with a single color, since the colors here aren't necessary.  Here, since the color "blue" is not part of the original data, we specify the `fill` argument outside of the `aes()` function, since we're not mapping a piece of the data to a part of the graph:  `Embarked_dist_plot + geom_bar(fill = "blue") + coord_cartesian()`.
+
+```{r}
+ggplot(data = titanic, aes(x = Embarked)) +
+    geom_bar(fill = "blue") +
+    coord_cartesian()
+```
+
+d.  Okay, our graph is looking a bit better -- but we're still missing a title!  Add a title to our plot with the `labs()` function as we did in a previous assignment.  Be sure that your title uses proper capitalization, is succinct, and provides a brief description of what the graph shows.  Feel free to also add a subtitle and a caption if you'd like, but be sure that these are informative.
+
+```{r}
+ggplot(data = titanic, aes(x = Embarked)) +
+    geom_bar(fill = "blue") +
+    coord_cartesian() +
+    labs(title = "Counts of passengers by port of embarkment")
+```
+
+e.  The graph already has some x- and y-axis labels, but they're kind of boring.  How does `ggplot` choose the default labels?  
+
+It chooses the default labels using variable names, or the statistic name if applicable.
+
+
+f.  Let's change the labels.  Update the `labs()` function to do this, adding it to the code for your graph as you did with the title.  Use the help documentation for the `labs()` function to figure out how it works.  (Hint:  Specify the `x` and `y` arguments.)  Be sure that your labels describe what is being displayed on each axis. Recall what the descriptions of the variables [here](https://www.kaggle.com/c/titanic/data).
+
+```{r}
+ggplot(data = titanic, aes(x = Embarked)) +
+    geom_bar(fill = "blue") +
+    coord_cartesian() +
+    labs(title = "Counts of Passengers by Port of Embarkation",
+         x = "Port of Embarkation",
+         y = "Number of Passengers")
+```
+
+g.  Okay, now we have a pretty nice graph.  Let's describe it for someone who isn't as familiar with the data as we are.  Describe the distribution you see in your bar chart. Which port did the most passengers embark on?  Which port had the fewest passengers embark on? From the graph, roughly how many people embarked at Southampton?
+
+Most passengers embarked at Southampton, while the least embarked at Queenstown. Almost 600 people embarked at Southampton.
+
+h.  In part (a) (and throughout our ever-growing line of code to create this graphic), `+ coord_cartesian()` tells `ggplot` to make this plot in the cartesian (x-y) plane.  What would happen if we used a different coordinate system?  Try changing `coord_cartesian()` to `coord_polar()` (present this graphic only).  Be sure to adjust the title and axis labels as necessary.  What happens?  This is called a rose diagram.
+
+```{r}
+ggplot(data = titanic, aes(x = Embarked)) +
+    geom_bar(fill = "blue") +
+    coord_polar() +
+    labs(title = "Counts of Passengers by Port of Embarkation",
+         x = "Port of Embarkation",
+         y = "Number of Passengers")
+```
+
+i.  Which graph do you like better -- the graph in (h), or the graph in (g)?  There is not necessarily a right answer here (yet); just be sure to justify your choice.  Which graph is easier to read?  In which graph is it easier to discern the differences amongst the categories?  In which graph is it easier to estimate the exact number of passengers that embarked at the different ports?
+
+The graph in (g) as it is easier to read. It is easier to compare the differences in counts in (g) than in (h). It is also easier to tell the number of passengers at each port in (g) as it is easier to read off the y-axis ticks than trying to follow the radial components in (h).
+
+
+***
+***
+
+
+#  Problem 4
+
+**Repeat Problem 3 with the `Pclass` Variable**
+
+Note:  You don't have to repeat all parts of the problem individually.  Just follow the directions below in parts (a) and (b), and be sure to answer the questions asked.
+
+a.  (12 points)  Create a bar chart that shows the distribution of the `Pclass` variable in our `titanic` dataset.  The x-axis should show the unique values of `Pclass`.  The y-axis should show the overall frequency of that passenger class in the dataset.  Use a single color for all sentiments.  Give the graph an appropriate title and appropriate x- and y-axis labels.  Drop the `+ coord_cartesian()` from your code -- this is the default, so it is not necessary to specify this in the future.
+
+```{r}
+ggplot(data = titanic, aes(x = Pclass)) +
+    geom_bar(fill = "lightblue") +
+    labs(title = "Counts of Passengers by Ticket Class",
+         x = "Ticket Class",
+         y = "Number of Passengers")
+```
+
+b.  (5 points)  Which class was the most common?  Which was the least common? 
+
+Class 3 was the most common while class 2 was the least common.
+
+
+
+***
+***
+
+
+#  BONUS
+
+(5 points)  
+
+**2-Dimensional Categorical Data**
+
+Next week, we'll cover the visualization of 2-dimensional categorical data.  If you're feeling ambitious, however, you can try to do this with our `Embarked` and `Pclass` variables here.
+
+Re-create the graph from problem 3, part (f), except instead of giving each bar the same blue fill, fill in each passenger class' bar with multiple colors -- proportional to the frequency of which of the three ports these passengers embarked.
+
+Hint:  This is easier to do than it sounds with `ggplot`.  You need to map a piece of the data (`Pclass`) to a piece of the graph (the fill color of the bars).
+
+Note:  The instructor and TAs are not allowed to help you with bonus problems!  
+
+```{r}
+ggplot(data = titanic, aes(x = Pclass)) +
+    geom_bar(aes(fill = Embarked)) +
+    coord_cartesian() +
+    labs(title = "Counts of Passengers by Port of Embarkation and Ticket Class",
+         x = "Ticket Class",
+         y = "Number of Passengers")
+```
+
+***
+***
