@@ -174,8 +174,6 @@ The graph in (g) as it is easier to read. It is easier to compare the difference
 
 **Repeat Problem 3 with the `Pclass` Variable**
 
-Note:  You don't have to repeat all parts of the problem individually.  Just follow the directions below in parts (a) and (b), and be sure to answer the questions asked.
-
 a.  (12 points)  Create a bar chart that shows the distribution of the `Pclass` variable in our `titanic` dataset.  The x-axis should show the unique values of `Pclass`.  The y-axis should show the overall frequency of that passenger class in the dataset.  Use a single color for all sentiments.  Give the graph an appropriate title and appropriate x- and y-axis labels.  Drop the `+ coord_cartesian()` from your code -- this is the default, so it is not necessary to specify this in the future.
 
 ```{r}
@@ -203,12 +201,6 @@ Class 3 was the most common while class 2 was the least common.
 **2-Dimensional Categorical Data**
 
 Next week, we'll cover the visualization of 2-dimensional categorical data.  If you're feeling ambitious, however, you can try to do this with our `Embarked` and `Pclass` variables here.
-
-Re-create the graph from problem 3, part (f), except instead of giving each bar the same blue fill, fill in each passenger class' bar with multiple colors -- proportional to the frequency of which of the three ports these passengers embarked.
-
-Hint:  This is easier to do than it sounds with `ggplot`.  You need to map a piece of the data (`Pclass`) to a piece of the graph (the fill color of the bars).
-
-Note:  The instructor and TAs are not allowed to help you with bonus problems!  
 
 ```{r}
 ggplot(data = titanic, aes(x = Pclass)) +
