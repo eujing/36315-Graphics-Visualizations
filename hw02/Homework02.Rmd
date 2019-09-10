@@ -276,7 +276,7 @@ c.  Sometimes, it improves our abiliity to compare across graphics if we have al
 
 ```{r}
 ggplot(titanic, aes(x = Pclass)) +
-    facet_wrap(~ Parch) +
+    facet_grid(~ Parch) +
     geom_bar(fill = "lightblue", color = "black") +
     labs(title = "Counts of Each Ticket Class",
          x = "Ticket Class",
@@ -287,29 +287,33 @@ d.  Recreate the graph from part (c), but this time, add `+ facet_grid(facetting
 
 ```{r}
 ggplot(titanic, aes(x = Pclass)) +
-    facet_wrap(Parch ~ .) +
+    facet_grid(Parch ~ .) +
     geom_bar(fill = "lightblue", color = "black") +
     labs(title = "Counts of Each Ticket Class",
          x = "Ticket Class",
          y = "Count")
 ```
+
+I prefer the version from part c), as the heights of each bar do not get squashed too much such that we can no longer see the trend as in this graph.
 
 e.  We can actually facet on multiple categorical variables at once.  Let's try it.  Recreate the graph from part (d), but this time, facet on both the `Sex` and `Survived` variables.  To do this, add `+ facet_grid(Sex ~ Survived)`. Interpret the graph. **Although in your answer please don't wildly speculate, I encourage you to ask yourself "What is going on here?" and try to relate the graph to your knowledge about the Titanic (this will help prepare you for later in the class).**
 
 ```{r}
 ggplot(titanic, aes(x = Pclass)) +
-    facet_wrap(Sex ~ Survived) +
+    facet_grid(Sex ~ Survived) +
     geom_bar(fill = "lightblue", color = "black") +
     labs(title = "Counts of Each Ticket Class",
          x = "Ticket Class",
          y = "Count")
 ```
 
+The females had a higher survival rate than the males, which makes sense as the females and children got off the boat first, followed by the males.
+
 f. Repeat the facetting but this time use `Sex` and `Parch`. Some of the facets in the graph are empty. Why? (Hint:  Look at a contingency table of these two variables with `table(titanic$Parch, titanic$Sex)`.) Briefly interpret graph.
 
 ```{r}
 ggplot(titanic, aes(x = Pclass)) +
-    facet_wrap(Sex ~ Parch, nrow = 2, ncol = 7) +
+    facet_grid(Sex ~ Parch) +
     geom_bar(fill = "lightblue", color = "black") +
     labs(title = "Counts of Each Ticket Class",
          x = "Ticket Class",
