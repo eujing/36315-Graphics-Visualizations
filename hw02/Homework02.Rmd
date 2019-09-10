@@ -126,7 +126,9 @@ ggplot(titanic, aes(x = Pclass)) +
     labs(title = "Counts of Each Ticket Class",
          fill = "Ticket Class",
          x = "Ticket Classes",
-         y = "Proportions of Each Ticket Class")
+         y = "Total Count of Ticket Classes") +
+    theme(axis.ticks.x = element_blank(),
+          axis.text.x = element_blank())
 ```
 
 b.  (3 points)  In a spine chart, what are the widths of the bars proportional to (if anything)?  What are the heights of the bars proportional to (if anything)?  How is this different from a bar chart?
@@ -141,8 +143,10 @@ ggplot(titanic, aes(x = Pclass)) +
     labs(title = "Counts of Each Ticket Class",
          fill = "Ticket Class",
          x = "Ticket Classes",
-         y = "Proportions of Each Ticket Class") +
-    coord_flip()
+         y = "Total Count of Each Ticket Class") +
+    coord_flip() +
+    theme(axis.ticks.y = element_blank(),
+          axis.text.y = element_blank())
 ```
 
 d.  (BONUS:  1 point)  Remove the ugly `factor(1)` from the x-axis label, without changing the rest of the graphic.
@@ -159,7 +163,19 @@ e. (BONUS: 1 point) Remove the tick on the x-axis.
 
 a.  (4 points)  Re-create the graph from Problem 3, but use a rose diagram.  Be sure to correctly label the axes, if necessary.  Include an appropriate title.
 
+```{r}
+ggplot(titanic, aes(x = Pclass)) +
+    geom_bar(fill = "lightblue", color = "black") +
+    coord_polar() +
+    labs(title = "Counts of Each Ticket Class",
+         fill = "Ticket Class",
+         x = "Ticket Classes",
+         y = "Counts of Each Ticket Class")
+```
+
 b.  (3 points)  In a rose diagram, what is the radius of each rose petal proportional to?  What does the angle associated with each rose petal correspond to (if anything)?  What is the area of each rose petal proportaional to?
+
+The radius of each petal is proportional to the the counts of each ticket class. The angle is the same across all petals, in that it is not associated with anything in particular. The area is proportional to the square of the counts of each ticket class.
 
 ***
 ***
@@ -173,11 +189,32 @@ To create a pie chart, use a similar technique to what you used to create a spin
 
 a.  (4 points)  Re-create the graph from Problem 3, but use a pie chart.  Be sure to correctly label the axes, if necessary.  Include an appropriate title.
 
+```{r}
+ggplot(titanic, aes(x = Pclass)) +
+    geom_bar(aes(x = factor(1), fill = Pclass), color = "black", width = 1) +
+    coord_polar(theta = "y") +
+    labs(title = "Counts of Each Ticket Class",
+         fill = "Ticket Class",
+         x = "", y = "") +
+    theme(axis.ticks.y = element_blank(),
+          axis.text.y = element_blank())
+
+```
+
 b.  (3 points)  In a pie chart, what does the radius of each pie slice correspond to (if anything)?  What does the angle associated with each pie slice correspond to (if anything)?
+
+The radius does not correspond to anything. The angle corresponds to the respective counts of each ticket class as a proportion of the total count.
 
 c.  (3 points)  Summarize the differences between a rose diagram and a pie chart in no more than two sentences.
 
+A rose diagram shows the quantities in terms of the radius while a pie chart shows the quantities in terms of the angle.
+
 d.  (10 points)  Of the four graphs we used to visualize the `Pclass` variable, which do you prefer?  Why?  Discuss the strengths (if any) and weaknesses (if any) of each.
+
+I prefer the bar charts as it is the simplest to intepret the numerical counts and visually compare the relative counts.  
+The spine chart could be better for data with more dimensions as it could be combined with a bar chart, however it makes it hard to know the approximate numerical counts.  
+The rose petal chart makes it hard to compare relative counts for counts that are close as it is harder to see the differences in the relative radii, and similarly makes it hard to see the approximate numerical counts as we have to trace the arcs to the vertical points.
+The pie chart has similar problems as the rose petal chart, in that it is hard to detect close differences in the angle. We are also not able to know the approximate numerical counts.
 
 ***
 ***
@@ -187,13 +224,13 @@ d.  (10 points)  Of the four graphs we used to visualize the `Pclass` variable, 
 
 **Statistical Tests**:
 
-Your friend says to you, "The passengers were equally likely to belong to any of the three classes."  
-
-You obviously disagree.  You show your friend your graphs from the previous four problems, but your friend is still unconvinced, and wants to know if the differences across the classes in your graph are statistically significant.  
-
 (5 points)  What kind of statistical test could you use to show that the passengers are not equally likely to belong to any of the three classes? (think back to your earlier statistics classes)
 
+A chi-square test of independence, where the null hypothesis is that the three classes are independent and the alternative is that the three classes are dependent.  
+
 (BONUS: 2 points) What statistical test would you use to answer the question whether a passenger's class was associated with a passenger's survival rate?
+
+An ANOVA test.
 
 ***
 ***
@@ -213,16 +250,75 @@ With base-`R` graphics, facetting requires you to write a lot of code -- code to
 
 a.  Recreate the plot from Problem 3, but this time, facet on the `Embarked` variable.  To do this, add `+ facet_wrap(~ facetting_variable)` to the existing line of code.  
 
+```{r}
+ggplot(titanic, aes(x = Pclass)) +
+    facet_wrap(~ Embarked) +
+    geom_bar(fill = "lightblue", color = "black") +
+    labs(title = "Counts of Each Ticket Class",
+         x = "Ticket Class",
+         y = "Count")
+```
+
 b.  Adjust the `ncol` or `nrow` arguments in `facet_wrap()`.  How do they affect the way `facet_wrap()` places each facet into a grid of graphs?
+
+```{r}
+ggplot(titanic, aes(x = Pclass)) +
+    facet_wrap(~ Embarked, ncol = 2, nrow = 2) +
+    geom_bar(fill = "lightblue", color = "black") +
+    labs(title = "Counts of Each Ticket Class",
+         x = "Ticket Class",
+         y = "Count")
+```
+
+Adjusting `ncol` and `nrow` sets the overall grid dimensions for the graphs.
 
 c.  Sometimes, it improves our abiliity to compare across graphics if we have all the graphs in a single row or column, rather than having the plots displayed in multiple rows and columns.  Recreate the plot from Problem 3, but this time, facet on the `Parch` variable using the `facet_grid()` function.  To do this, add `+ facet_grid(~ facetting_variable)` to the existing line of code.  
 
+```{r}
+ggplot(titanic, aes(x = Pclass)) +
+    facet_wrap(~ Parch) +
+    geom_bar(fill = "lightblue", color = "black") +
+    labs(title = "Counts of Each Ticket Class",
+         x = "Ticket Class",
+         y = "Count")
+```
+
 d.  Recreate the graph from part (c), but this time, add `+ facet_grid(facetting_variable ~ .)` instead.  What changed?  Which version do you prefer for this particular problem?  Why?
+
+```{r}
+ggplot(titanic, aes(x = Pclass)) +
+    facet_wrap(Parch ~ .) +
+    geom_bar(fill = "lightblue", color = "black") +
+    labs(title = "Counts of Each Ticket Class",
+         x = "Ticket Class",
+         y = "Count")
+```
 
 e.  We can actually facet on multiple categorical variables at once.  Let's try it.  Recreate the graph from part (d), but this time, facet on both the `Sex` and `Survived` variables.  To do this, add `+ facet_grid(Sex ~ Survived)`. Interpret the graph. **Although in your answer please don't wildly speculate, I encourage you to ask yourself "What is going on here?" and try to relate the graph to your knowledge about the Titanic (this will help prepare you for later in the class).**
 
+```{r}
+ggplot(titanic, aes(x = Pclass)) +
+    facet_wrap(Sex ~ Survived) +
+    geom_bar(fill = "lightblue", color = "black") +
+    labs(title = "Counts of Each Ticket Class",
+         x = "Ticket Class",
+         y = "Count")
+```
+
 f. Repeat the facetting but this time use `Sex` and `Parch`. Some of the facets in the graph are empty. Why? (Hint:  Look at a contingency table of these two variables with `table(titanic$Parch, titanic$Sex)`.) Briefly interpret graph.
 
+```{r}
+ggplot(titanic, aes(x = Pclass)) +
+    facet_wrap(Sex ~ Parch, nrow = 2, ncol = 7) +
+    geom_bar(fill = "lightblue", color = "black") +
+    labs(title = "Counts of Each Ticket Class",
+         x = "Ticket Class",
+         y = "Count")
+```
+
+Some facets are empty as there are no rows in the data with those facet values, like males with 6 parents / children onboard.  
+From the graph, we can see that most of the passengers on the Titanic were males with no parents or children onboard, and of these males most of them were in the 3rd ticket class.  
+We can also see that in general, the number of passengers gets less as we look at increasing numbers of parents or children on board.
 
 ***
 ***
