@@ -112,12 +112,6 @@ ggplot(titanic, aes(x = Pclass)) +
 
 **Spine Charts**:  
 
-Spine Charts are similar to Bar Charts.  
-
-With a spine chart, we have a single (vertical) bar and multiple stacked, horizontal bars. To do this, change the aesthetic arguments in the `aes()` function in `geom_bar()`.  , e.g.:  `aes(x = factor(1), fill = my_variable)`
-
-This will create a single bar on the x-axis (since `factor(1)` creates a one-category categorical variable of length one) and fill the bar in with colors corresponding to whatever categorical values are in `my_variable`.
-
 a.  (4 points)  Re-create the graph from Problem 3, but use a spine chart. That is, use a spine chart to show the distribution of `Pclass`. Be sure to correctly label the axes -- remember, their interpretation may have changed from Problem 3.  Include an appropriate title (always do this).
 
 ```{r}
@@ -185,8 +179,6 @@ The radius of each petal is proportional to the the counts of each ticket class.
 
 **Pie Charts**:  
 
-To create a pie chart, use a similar technique to what you used to create a spine chart in Problem 4 (hint: check the argument `theta` of the function `coord_polar`). 
-
 a.  (4 points)  Re-create the graph from Problem 3, but use a pie chart.  Be sure to correctly label the axes, if necessary.  Include an appropriate title.
 
 ```{r}
@@ -230,7 +222,7 @@ A chi-square test of independence, where the null hypothesis is that the three c
 
 (BONUS: 2 points) What statistical test would you use to answer the question whether a passenger's class was associated with a passenger's survival rate?
 
-An ANOVA test.
+A chi-square test of independence, where the null hypothesis is that the survival rates are independent across classes and the alternative is that the three survival rates are dependent on the class.
 
 ***
 ***
@@ -239,14 +231,6 @@ An ANOVA test.
 #  Problem 8
 
 (3 points each)
-
-**Facetting**:
-
- "Facetting" refers to the process of partitioning the original data according to some categorical variable, then creating the same graphic once for each subset.  The resulting graphs are typically displayed in a grid, where each graph is a single "facet" of the full graphic.  
-
-This is a popular way to show how the features of the variable(s) being displayed in a particular graphic can change depending on some other variable.  
-
-With base-`R` graphics, facetting requires you to write a lot of code -- code to do the subsetting, code to display the graphics, etc.  With `ggplot()`, facetting is very easy, as we'll see below.
 
 a.  Recreate the plot from Problem 3, but this time, facet on the `Embarked` variable.  To do this, add `+ facet_wrap(~ facetting_variable)` to the existing line of code.  
 
