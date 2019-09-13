@@ -1,0 +1,192 @@
+---
+title: "36-315 Lab 03"
+author: "Eu Jing Chua"
+date: "Due Friday, Sept 13, 2019 (6:30pm)"
+output: 
+  html_document:
+    toc:  true
+    toc_float:  true
+    code_folding:  show
+---
+
+
+##  Lab 03 (Analyze This!): 1-D, 2-D, and 3-D Categorical Graphics
+
+Using the tidyverse style guide.
+***
+***
+
+<!--
+#  Example Graphic
+
+This is an example to look at it. No questions involved.
+
+<div style="width:750px">
+![](https://raw.githubusercontent.com/mateyneykov/315_code_data/master/data/calourie-sour-Academic-Task-1-IELTS-1.png)
+</div>
+
+
+
+
++  First, explain what is being shown in the graph.  What is being plotted on each axis?  What do the colors correspond to?  What are the units (if applicable)?  What are the ranges of different variables (if applicable)?  Where does the data come from (if applicable)?
+
++  Next, explain the main takeaway of the graph.  What do you want the viewer to understand after having seen this graph?
+
++  If applicable, explain any secondary takeaways or other interesting findings.
+
++  Finally, for this class, but not necessarily in general:  Critique the graph.  What do you like/dislike?  What would you keep/change?  Etc.
+
+-->
+
+***
+***
+
+#  Problem 1
+
+(5 points each)
+
+**Chi-Square Tests in R**:  
+
+```{r, warning = FALSE, message = FALSE}
+library(tidyverse)
+
+# reads Matey's IMDb rated movies TV Series, etc.
+mateys_imdb <- read_csv("https://raw.githubusercontent.com/mateyneykov/315_code_data/master/data/mateys_imdb_ratings.csv")
+
+# filters only Featured Films
+mateys_movies <- mateys_imdb %>% filter(`Title type` == "Feature Film")
+```
+
+a.
+```{r, warning = FALSE, message = FALSE}
+mateys_movies %>% group_by(Directors) %>% summarize(count = n()) %>% 
+  filter(count == max(count))
+```
+
+The above code finds the counts of movies by each director. The filter removes all rows that are not the maximum count of 9.
+
+b.
+
+```{r, warning = FALSE, message = FALSE}
+mateys_movies <- mutate(mateys_movies, 
+                    vote_date = as.Date(mateys_movies$created, 
+                                format = "%a %b %d %H:%M:%S %Y"),
+                    day_of_week = weekdays(vote_date),
+                    weekend = ifelse(day_of_week %in% c("Saturday", "Sunday"), 
+                                     "Weekend", "Workday"),
+                    duration = cut(`Runtime (mins)`, c(0, 90, 120, Inf), 
+                                        labels = c("Short", "Medium", "Long")),
+                    ratings = cut(`You rated`, c(0, 4, 7, Inf),
+                                  labels = c("Low", "Med", "High")),
+                    movie_period = cut(Year, c(0, 1980, 2000, 2018),
+                              labels = c("Old", "Recent", "New"))
+)
+```
+
+```{r, warning = FALSE, message = FALSE}
+#  Get counts, proportions, and percentages for duration
+duration_marginal <- mateys_movies %>%
+  group_by(duration) %>%
+  summarize(count = n(), 
+            total = nrow(mateys_movies),
+            proportion = round(count / total, 4),
+            percentage = proportion * 100)
+
+movie_period_marginal <- mateys_movies %>%
+    group_by(movie_period) %>%
+    summarize(count = n(),
+              total = nrow(mateys_movies),
+              proportion = round(count / total, 4),
+              percentage = proportion * 100)
+```
+
+c.
+
+```{r, fig.height = 5, fig.width = 10}
+library(gridExtra)  #  Be sure this is installed on your computer
+library(ggplot2)
+duration_plot <- ggplot(duration_marginal, aes(x = duration, y = percentage)) + 
+  geom_bar(stat = "identity") +
+  labs(x = "Runtime Duration (mins)",
+       y = "Percentage",
+       title = "Distribution of Runtime Durations")
+
+movie_period_plot <- ggplot(movie_period_marginal,
+                            aes(x = movie_period, y = percentage)) +
+                        geom_bar(stat = "identity") +
+                        labs(x = "Movie Period",
+                             y = "Percentage",
+                             title = "Distribution of Movie Periods")
+
+grid.arrange(duration_plot, movie_period_plot, ncol = 2)
+```
+
+d.  My friend is probably wrong, and I am quite certain but cannot quantify it just by looking at the plot.
+
+e.
+
+```{r}
+chisq.test(duration_marginal$count)
+```
+
+The test output shows the test statistic, the degrees of freedom, and the p-value of 2.2e-16. This is much smaller than a significance level of 0.05, so we reject the null hypothesis and conclude the proportions are different, so my friend is wrong.
+
+
+f.
+
+```{r}
+chisq.test(duration_marginal$count, p = c(0.075, 0.525, 0.4))
+```
+
+My friend's revised guess is not wrong, as we failed to reject the null hypothesis in this case (p-value = 0.8285) as our evidence did not strongly counter the null.
+
+
+g.  BONUS (2 points):
+
+The chi-square test assumes the measurements are nominal or ordinal in nature.
+
+***
+***
+
+
+#  Problem 2
+
+(10 points each)
+
+**2-D Bar Charts and (Empirical) Conditional Distributions**
+
+a.  Create a bar graph of `weekend`, and fill each bar with colors corresponding to the `ratings` variable.  As always, make sure your graph is properly labeled/titled/colored and has a legend.  This is a "stacked bar chart", as we will discuss on Monday.  (Code partially provided.)
+
+```{r}
+ggplot(mateys_movies, aes(x = weekend, fill = ratings)) + geom_bar()
+```
+
+b.  What does the plot show about Matey's high ratings?
+
+c.  Create another stacked bar chart, but use the `movie_period` (x-axis) and `ratings` (fill) variables instead.
+
+d.  Intepret the graph in (c), commenting on anything interesting you see.
+
+e. (No points) **Ask yourself (No response necessary):** What could you do to make this graphic (from part c) easier to interpret? That is, comparing these two variables what structure would you like to think about, and does this graphic do that the best?
+
+***
+***
+
+
+#  Problem 3
+
+(10 points each)
+
+**3-D and 4-D Categorical Data**
+
+With 2-D bar charts, we can visualize two categorical variables at once.  With facetting, we can increase this to 3-dimensional or even 4-dimensional graphs
+
+a.  Recreate the graph in Problem 2, part (c), but this time, facet on `weekend`.
+
+b.  Recreate the graph in Problem 3, part (a), but this time, facet by both `weekend` and `duration`
+
+c.  Interpret the two graphs, commenting on any interesting features you see.  Keep your interpretations **in the context of the problem/data**.
+
+
+***
+***
