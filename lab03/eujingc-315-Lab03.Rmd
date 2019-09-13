@@ -87,7 +87,7 @@ mateys_movies <- mutate(mateys_movies,
 #  Get counts, proportions, and percentages for duration
 duration_marginal <- mateys_movies %>%
   group_by(duration) %>%
-  summarize(count = n(), 
+  summarize(count = n(),
             total = nrow(mateys_movies),
             proportion = round(count / total, 4),
             percentage = proportion * 100)
@@ -105,7 +105,7 @@ c.
 ```{r, fig.height = 5, fig.width = 10}
 library(gridExtra)  #  Be sure this is installed on your computer
 library(ggplot2)
-duration_plot <- ggplot(duration_marginal, aes(x = duration, y = percentage)) + 
+duration_plot <- ggplot(duration_marginal, aes(x = duration, y = percentage)) +
   geom_bar(stat = "identity") +
   labs(x = "Runtime Duration (mins)",
        y = "Percentage",
@@ -155,19 +155,30 @@ The chi-square test assumes the measurements are nominal or ordinal in nature.
 
 **2-D Bar Charts and (Empirical) Conditional Distributions**
 
-a.  Create a bar graph of `weekend`, and fill each bar with colors corresponding to the `ratings` variable.  As always, make sure your graph is properly labeled/titled/colored and has a legend.  This is a "stacked bar chart", as we will discuss on Monday.  (Code partially provided.)
+a.  
 
 ```{r}
-ggplot(mateys_movies, aes(x = weekend, fill = ratings)) + geom_bar()
+ggplot(mateys_movies, aes(x = weekend, fill = ratings)) +
+    geom_bar() +
+    labs(x = "Type of Day of Week",
+         y = "Count",
+         title = "Counts of Ratings on Each Type of Day of Week",
+         fill = "Ratings")
 ```
 
-b.  What does the plot show about Matey's high ratings?
+b.  The plot shows that the count of high ratings do not differ much between weekends and workdays.
 
-c.  Create another stacked bar chart, but use the `movie_period` (x-axis) and `ratings` (fill) variables instead.
+c.  
+```{r}
+ggplot(mateys_movies, aes(x = movie_period, fill = ratings)) +
+    geom_bar() +
+    labs(x = "Movie Period",
+         y = "Count",
+         title = "Counts of Ratings on Each Movie Period",
+         fill = "Ratings")
+```
 
-d.  Intepret the graph in (c), commenting on anything interesting you see.
-
-e. (No points) **Ask yourself (No response necessary):** What could you do to make this graphic (from part c) easier to interpret? That is, comparing these two variables what structure would you like to think about, and does this graphic do that the best?
+d.  The total counts of movies in each movie period has been increasing, but it is hard to tell if the proportions of each rating has changed over the periods.
 
 ***
 ***
@@ -179,13 +190,35 @@ e. (No points) **Ask yourself (No response necessary):** What could you do to ma
 
 **3-D and 4-D Categorical Data**
 
-With 2-D bar charts, we can visualize two categorical variables at once.  With facetting, we can increase this to 3-dimensional or even 4-dimensional graphs
+a.  
 
-a.  Recreate the graph in Problem 2, part (c), but this time, facet on `weekend`.
+```{r}
+ggplot(mateys_movies, aes(x = movie_period, fill = ratings)) +
+    facet_wrap(~ weekend) +
+    geom_bar() +
+    labs(x = "Movie Period",
+         y = "Count",
+         title = "Counts of Ratings on Each Movie Period",
+         fill = "Ratings")
+```
 
-b.  Recreate the graph in Problem 3, part (a), but this time, facet by both `weekend` and `duration`
+b.  
 
-c.  Interpret the two graphs, commenting on any interesting features you see.  Keep your interpretations **in the context of the problem/data**.
+```{r}
+ggplot(mateys_movies, aes(x = movie_period, fill = ratings)) +
+    facet_grid(duration ~ weekend) +
+    geom_bar() +
+    labs(x = "Movie Period",
+         y = "Count",
+         title = "Counts of Ratings on Each Movie Period",
+         fill = "Ratings")
+```
+
+c.  
+
+From the first plot, it can been seen that the number of high ratings across each movie period does not vary much between a weekend and a workday, despite there being more observations on workdays than weekends in general.  
+
+It is also interesting to note that the patterns observed in the first plot are still roughly observered in each facet of duration in the second plot, where the same pattern roughly applies across different durations of movies, but with there being much less observations for short movies in general.
 
 
 ***
