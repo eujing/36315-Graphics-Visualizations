@@ -1,6 +1,6 @@
 ---
 title: "36-315 Homework 03, Spring 2019"
-author: "Your Name Here"
+author: "Eu Jing Chua"
 date: "Due Wed, Sept 18 2019 (11:00pm ET) on Canvas"
 output: 
   html_document:
@@ -29,24 +29,22 @@ a.  Using the tidyverse style guide.
 
 **Reading about `ggplot2`**:  
 
-a.  The components of a graph are different layers, such as the data itself, the dots on a scatterplot, the line of best fit, the scales, and the coordinate system.  
+a.  The components of a graph are different layers, such as the data itself, the dots on a scatterplot, the line of best fit, the scales, and the coordinate system.
+    We can adjust the axis scaling with `scale_x_log10()` for the x-axis, for example.  
 
-We can adjust the axis scaling with `scale_x_log10()` for the x-axis, for example.  
-
-The ggplot way is better, as we simply declare what we need to facet on and ggplot understands how to generate the graphics we need, instead of us needing to manually create each plot.
+    The ggplot way is better, as we simply declare what we need to facet on and ggplot understands how to generate the graphics we need, instead of us needing to manually create each plot.
 
 
 b.  A `geom_point`, or points, is used to create a scatterplot. 
 
-c.  (2 points)  Read [this article](https://www.r-bloggers.com/a-simple-introduction-to-the-graphing-philosophy-of-ggplot2/) on `ggplot()`.
+c.  The advanced parts are statistical transformations, coordinate systems, facets, and visual themes.  
+  Themes are the overall visual defaults of a plot: background, grids, axe, default typeface, sizes, colors, etc.
 
-+  What does the author describe as being "advanced parts" of the `ggplot2` grammar?
-+  What is a theme?
-
-d.  (3 points)  Read [this article](https://www.r-bloggers.com/the-best-r-package-for-learning-to-think-about-visualization/) on data visualization in `R`.
-
-+  What reasons does the author give for recommending `ggplot()` for data visualization in `R`?
-+  What are the three critical principles of visualization, according to the author?  Describe each in 1-2 sentences.
+d.  The author says to use ggplot as it teaches us how to think about visualizing our data.  
+  The critical principles are:  
+  1) Mapping data to aesthetics, which means to associate variables in the data with geometrical properties.  
+  2) Layering, which allows us to combine many components together to generate more advanced plots.  
+  3) Iteration, which allows us to incrementally improve on our plots.  
 
 
 ***
@@ -57,39 +55,14 @@ d.  (3 points)  Read [this article](https://www.r-bloggers.com/the-best-r-packag
 
 **Critiquing Graphs**:
 
-Find a graph from the internet (last 7 days -- e.g. a news article, blog post, etc) or from an academic journal (last 60 days).  Describe and critique your graph using the suggestions below.  In parts (b)-(d), you do not have to address each bullet below -- these are just suggestions of things you can discuss when describing/critiquing your graph.
+a.  The graph is from the following [reddit link](https://www.reddit.com/r/dataisbeautiful/comments/d59srb/oc_visualizing_the_martingale_roulette_strategy/).
+  ![](https://i.redd.it/etwigg4jz1n31.png)
 
-a.  (1 point)  **Include the graph in your assignment**.  Two choices here:  
+b.  Looking at the thread this graph came from, this graph is meant to show simulated runs of the Martingale Roulette Strategy across 100 spins. The y-axis shows the amount of money and the x-axis shows the number of spins. Each run is a different colored line, and the main result is meant to show that the Martingale strategy with limited money and limited turns is not a good strategy for making money in real life.
 
-+  embed the graph/image in the .html file (see below for instructions) and submit it along with your other files on Canvas, or 
-+  include a link to the graph in your answer to this question.
+c.  This graph does not do a good job. There are no axis labels and no title to explain what the graph is about. There is an overload of information as each run of the simulation is too striking and contrasting in colors, looking more like noise than showing any structure. I would add labels and titles, as well as use the same color for all runs but with an alpha value so that overlapping areas show through more prominently.
 
-b.  (5 points)  **Describe the graph**.  
-
-+  What does the graph show?  
-+  What variables are plotted on the axes, via color, or via other features of the graph?
-+  **What is the main result of the graph?**
-
-c.  (4 points)  **Critique the graph**.
-
-+  Does the graph do a good job of achieving its goals?  
-+  Does the graph use an unnecessary amount of data ink?  
-+  Does the graph distort the actual effect/data/relationship?  
-+  What are the strengths and weaknesses (if any) of the graphic?  
-+  What would you change (if anything) about this graphic?
-
-d.  (3 points)  **Critique the caption and/or surrounding text**.  
-
-+  Does the text enhance the user's understanding of the graphic?  
-+  What else would you include in the caption/surrounding text to help the viewer understand the graphic?
-
-To include an image from the internet in your `R` Markdown output, use the following code (adjust the width and height as necessary):
-
-(Note:  If you're viewing the .html file, you'll see CMU's logo below; the code to render this image is in the .Rmd file.)
-
-<div style="width:300px">
-![](https://upload.wikimedia.org/wikipedia/en/thumb/b/bb/Carnegie_Mellon_University_seal.svg/1024px-Carnegie_Mellon_University_seal.svg.png)
-</div>
+d.  There is almost no text to tell the user about the graph, only by reading the thread will someone understand anything. The legend at the side also serves no purpose as having an entry for every run of the simulation does not add any information and there are simply too man runs to keep track of the colors.
 
 
 ***
@@ -104,36 +77,7 @@ To include an image from the internet in your `R` Markdown output, use the follo
 
 Pie charts and rose diagrams are rarely the most effective way of displaying categorical data.
 
-a.  Create a pie chart of the `movie_period` variable in the Matey's IMDb data (just feature films) from Lab 03 with no hole in the middle (**please also make sure to run all the code which adds additional variables to the data**). 
-
-If your pie chart does not have a small hole in the middle proceed to the next question. If your pie chart has a small hole in the middle -- fix this.  Search the internet for how to do this (something like "hole in pie chart ggplot" should do the trick).  
-
-(Aside:  Learning how to use online documentation and help forums is an extremely important skill when using any programming language, including `R`.  Although it's painful to think about, there will come a time where you can't ask Matey how to do something on Piazza or send him an email at 4am the night before an assignment is due.  Learning how to effectively use the internet to find the information you're looking for is a skill you will continue to use throughout your career.)
-
-b.  In Lab 03, we learned how to make a stacked bar chart.  In Lab 02 and Homework 02, we learned that rose diagrams were really just bar charts in polar coordinates.  That must mean that we can make a "stacked rose diagram".  Make a stacked rose diagram that shows the marginal distribution of the `movie_period` variable and the conditional distributions of `ratings` given each `movie_period`.  Create the corresponding stacked bar chart.  Arrange these two graphs into a 1x2 grid using `grid.arrange()`.
-
-**Extra recommendation (Not required)**: Try to rewrite your code using the idea of layering for this answer.
-
-c.  Describe and critique the stacked rose diagram.  
-
-+  Where is the marginal distribution of `movie_period` on this chart?
-+  Where is the conditional distribution of `ratings` given that the movie period is recent?  
-+  Why, to put it bluntly, is this just an absolutely terrible graph?  (Give at least two reasons.)  It may help to compare this to the stacked bar chart of the same variables in your answer.
-
-
-
-***
-***
-
-
-#  Problem 4
-
-(3 points each)
-
-**Data Manipulation and The Many Ways To Create 1-D and 2-D Bar Charts**
-
-
-a.  This problem uses the data on Matey's IMDb ratings from Lab 03. Check to make sure your dataset code for Problem 3 is the same as below (which we will be using for the questions below)
+a.  
 
 ```{r, warning = FALSE, message = FALSE}
 library(tidyverse)
@@ -159,60 +103,189 @@ mateys_movies <- mutate(mateys_movies,
 )
 ```
 
-+  What additional columns are created?  
-+  What function is used to add the additional columns to the existing data frame?  
-+  What package is this function in?  
-+  Who is the author of this package?
-+  Create a new column called `less_than_7_star` ("Less than 7 Stars" if Matey's rating is less than 7, "7 or More Stars" otherwise) and another new column called `monday` ("Yes" if Matey voted on Monday, and "No" otherwise. hint: look at the function `ifelse`)
-
-b.  Create a bar chart of `day_of_week` using the standard approach:  `ggplot(data, aes(x = categorical_variable)) + geom_bar()`.  Add appropriate titles and labels to your graph.
-
-c.  Often, with large datasets, it can take a small amount of time to do the calculations necessary to create the bar chart.  This is because when you call `geom_bar()`, it tabulates the counts in each category when the line of code is run.  For large datasets, it's better to store the counts ahead of time and then reference these when creating the bar chart, as we did in Lab 03 with `duration_marginal`.  Here, create a bar plot showing the distribution of `day_of_week` (at the count scale), but calculate the marginal distribution ahead of time (i.e., use an approach similar to Lab 03 Problem 1).
-
-d.  The same applies to 2-D bar charts.  But first, build a stacked bar chart of `day_of_week` (x-axis) and `less_than_7_star` (fill), in the standard way (`... + geom_bar()`). 
-
-e.  Next, use the following approach to build the same graph:
-
-```{r, warning = FALSE, message = FALSE}
-library(tidyverse)
-#days_stars <- mateys_movies %>%
-#  group_by(day_of_week, less_than_7_star) %>%
-#  summarize(count = n())
-
-#ggplot(days_stars, aes(x = day_of_week, y = count, fill = less_than_7_star)) + 
-#  geom_bar(stat = "identity")
+```{r}
+ggplot(mateys_movies, aes(x = "", y = movie_period, fill = movie_period)) +
+    geom_bar(width = 1, stat = "identity") +
+    coord_polar(theta = "y", start = 0) +
+    labs(x = "",
+         y = "",
+         fill = "Movie Period",
+         title = "Proportions of Movie Periods") +
+    theme_void()
 ```
 
-(Uncomment the code above and add your titles/labels.)
 
-Compare the code in (e) to that of (d).  Why do we use `stat = "identity"` in (e)?  What is the default `stat` in `geom_bar()` (i.e., what is used by default in (d))?
+b.  
+```{r}
+library(gridExtra)
 
-f.  Another way to visualize two categorical variables is with a "side-by-side" bar chart.  To do this add `position = "dodge"` in the `geom_bar` in copies of the code parts (d) and (e). Present both using grid.arrange with 1 column.
+sbar <- ggplot(mateys_movies, aes(x = movie_period, fill = ratings)) +
+               geom_bar() +
+               labs(x = "Movie Period",
+                    y = "Counts",
+                    fill = "Ratings",
+                    title = "Distributions of Ratings")
+rose <- sbar + coord_polar()
 
-g.  Another way to visualize two categorical variables is with a "proportional" bar chart.  To do this, use the same code as above, except change `position = "dodge"` (which will place the bars side-by-side) to `position = "fill"` which will fix the heights of the bars to all be 1, and fill them in proportionally according to the second variable.  Be sure to change your y-axis label to something appropriate.
+grid.arrange(rose, sbar, ncol = 2)
+```
 
-h.  It can be difficult to read the category names on the x-axis sometimes, as longer category names will often overlap.  Search the internet for an approach for rotating the x-axis labels in `ggplot()`.  Pick one of the graphs in (d), (e), (f), and (g), and rotate the labels in this graph by 45 degrees.  You do not need to recreate the graph here -- just rotate the labels in the version you created above.
+c.  The marginal distribution of `movie_period` can be seen from the radius of each petal.  
+The conditional distribution of `ratings` given that the movie period is recent can be seen by how the radius is partioned for the Recent petal into 3 colors.  
+The stacked rose chart is horrible because we will perceptually compare the areas for looking at the conditional distributions, but the areas are not proportional to the actual proportions. It is also much harder to see the distribution of within smaller petals compared to the stacked bar chart.  
 
-i.  Some people prefer for the bars in bar charts to be displayed horizontally instead of vertically.  To do this, just add `+ coord_flip()` to your graph.  Pick another one of the graphs in (d), (e), (f), and (g) (not the same one you picked for part (h)), and change it so that the bars are displayed horizontally.  You do not need to recreate the graph here -- just change in the version you created above.
-
-j.  Compare the graphs you created in (e), (f), and (g) -- that is, compare the stacked, side-by-side, and proportional bar charts.  
-
-+  What information is easier to see in some graphs, but not others?  
-+  What are the advantages of the stacked bar chart?  
-+  What are the advantages of the side-by-side bar chart?  
-+  What are the advantages of the proportional bar chart?
-+  Do you think that one of these is **always** better than the other?  Or does it depend on the purpose for which you're creating the graph?
-
-k.  There are even more ways to show bar charts at the proportion or percentage scales.  In the background, the `geom_bar()` function calculates the counts in each category, which are stored in an object called `..count..`.  Using the default settings (i.e. just `geom_bar()`), the y-axis aesthetic is automatically assigned to the `..count..` object (i.e., `geom_bar(aes(y = ..count..))` will give you the same result as `geom_bar()`).  We can use this to create bar charts at the proportion scale in another way:
-
-+  Start by creating the bar chart with proportions  (for the `day_of_week` variable) in the standard way, using `mateys_movies` and not the pre-calculated marginal distribution.
-+  To do this, scale the y-axis aesthetic by the sum of the counts, i.e.:  `... + geom_bar(aes(y = (..count..)/sum(..count..)))`.  
-+  Be sure to use properly labeled axes, titles, etc.
-
-l.  Convert this to the percentage scale by multiplying the y-axis aesthetic from (k) by 100.  Be sure to use properly labeled axes, titles, etc.
+***
+***
 
 
-This was a long problem, but the goal was to show you that `ggplot()` is extremely flexible, and that there are many ways of visualizing the same variables!  We'll spend a lot of time over the next few weeks talking about which ways are best in which cases.
+#  Problem 4
+
+(3 points each)
+
+**Data Manipulation and The Many Ways To Create 1-D and 2-D Bar Charts**
+
+
+a.  
+```{r, warning = FALSE, message = FALSE}
+library(tidyverse)
+
+# reads Matey's IMDb rated movies TV Series, etc.
+mateys_imdb <- read_csv("https://raw.githubusercontent.com/mateyneykov/315_code_data/master/data/mateys_imdb_ratings.csv")
+
+# filters only Featured Films
+mateys_movies <- mateys_imdb %>% filter(`Title type` == "Feature Film")
+
+mateys_movies <- mutate(mateys_movies, 
+                    vote_date = as.Date(mateys_movies$created, 
+                                format = "%a %b %d %H:%M:%S %Y"),
+                    day_of_week = weekdays(vote_date),
+                    weekend = ifelse(day_of_week %in% c("Saturday", "Sunday"), 
+                                     "Weekend", "Workday"),
+                    duration = cut(`Runtime (mins)`, c(0, 90, 120, Inf), 
+                                        labels = c("Short", "Medium", "Long")),
+                    ratings = cut(`You rated`, c(0, 4, 7, Inf),
+                                  labels = c("Low", "Med", "High")),
+                    movie_period = cut(Year, c(0, 1980, 2000, 2018),
+                              labels = c("Old", "Recent", "New")),
+                    less_than_7_star = ifelse(`You rated` < 7,
+                                              "Less than 7 Stars",
+                                              "7 or More Stars"),
+                    monday = ifelse(day_of_week == "Monday", "Yes", "No")
+)
+```
+  The additional columns are `vote_date`, `day_of_week`, `weekend`, `duration`, `ratings`, and `movie_period`.  
+  The function used is `mutate`, from `dplyr`, of which Hadley Wickham is the author of.
+
+b.  
+```{r}
+ggplot(mateys_movies, aes(x = day_of_week)) +
+    geom_bar() +
+    labs(x = "Day of Week", y = "Count", title = "Counts of Votes Across Day of Week")
+```
+
+
+c.  
+```{r}
+dow_marginal <- mateys_movies %>%
+    group_by(day_of_week) %>%
+    summarize(count = n())
+
+ggplot(dow_marginal, aes(x = day_of_week, y = count)) +
+    geom_bar(stat = "identity") +
+    labs(x = "Day of Week", y = "Count", title = "Counts of Votes Across Day of Week")
+```
+
+
+d.  
+```{r}
+ggplot(mateys_movies, aes(x = day_of_week, fill = less_than_7_star)) +
+    geom_bar() +
+    labs(x = "Day of Week",
+         y = "Count", 
+         title = "Counts of Votes Across Day of Week",
+         fill = "Less than 7 Stars")
+```
+
+e.  
+```{r, warning = FALSE, message = FALSE}
+library(tidyverse)
+days_stars <- mateys_movies %>%
+    group_by(day_of_week, less_than_7_star) %>%
+    summarize(count = n())
+
+ggplot(days_stars, aes(x = day_of_week, y = count, fill = less_than_7_star)) +
+    geom_bar(stat = "identity") +
+    labs(x = "Day of Week",
+        y = "Count", 
+        title = "Counts of Votes Across Day of Week",
+        fill = "Less than 7 Stars")
+```
+
+    We use `stat = "identity"` in (e) to let ggplot know that we have already provided the counts, as the default is `"count"`.
+
+f.  
+```{r}
+dow_star_labs <- labs(x = "Day of Week",
+                      y = "Count",
+                      title = "Counts of Votes Across Day of Week",
+                      fill = "Less than 7 Stars")
+
+g1 <- ggplot(mateys_movies, aes(x = day_of_week, fill = less_than_7_star)) +
+    geom_bar(position = "dodge") +
+    dow_star_labs
+
+g2 <- ggplot(days_stars, aes(x = day_of_week, y = count, fill = less_than_7_star)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    dow_star_labs
+
+grid.arrange(g1, g2, ncol = 1)
+```
+
+
+g.  
+```{r}
+dow_star_prop_labs <- labs(x = "Day of Week",
+                           y = "Proportion",
+                           title = "Proportions of Votes Across Day of Week",
+                           fill = "Less than 7 Stars")
+g1 <- ggplot(mateys_movies, aes(x = day_of_week, fill = less_than_7_star)) +
+    geom_bar(position = "fill") +
+    dow_star_prop_labs +
+    coord_flip()
+
+g2 <- ggplot(days_stars, aes(x = day_of_week, y = count, fill = less_than_7_star)) +
+    geom_bar(stat = "identity", position = "fill") +
+    dow_star_prop_labs +
+    theme(axis.text.x = element_text(angle = 45))
+
+grid.arrange(g1, g2, ncol = 1)
+```
+
+
+h.  Rotated second graph in (g).
+
+i.  Flipped first graph in (g)
+
+j.  It is easier to see the marginal distribution over days of week with the stacked bar chart, conditional distributions given days of week with the side-by-side bar chart, and relative proportions in the proportional bar charts. Each chart has its own advantages and should be used depending on what kind of distribution we want to focus on.
+
+k.  
+```{r}
+ggplot(mateys_movies, aes(x = day_of_week)) +
+    geom_bar(aes(y = (..count..)/sum(..count..))) +
+    labs(x = "Day of Week",
+         y = "Proportion",
+         title = "Proportions of Votes Across Day of Week")
+```
+
+
+l.  
+```{r}
+ggplot(mateys_movies, aes(x = day_of_week)) +
+    geom_bar(aes(y = 100 * (..count..) / sum(..count..))) +
+    labs(x = "Day of Week",
+         y = "Percentage",
+         title = "Percentage of Votes Across Day of Week")
+```
 
 ***
 ***
@@ -224,26 +297,78 @@ This was a long problem, but the goal was to show you that `ggplot()` is extreme
 
 **Reordering Categories and Bars**
 
-In Problem 4, the days of week are plotted in an illogical order.  This is because they are stored as factors. Let's fix this.
+a.  The default ordering of character variables is alphabetical.
 
-a.  What is the default plotting order for categorical ("character" or "factor") variables in `R`?  (You should be able to determine this from glancing at the order of the categories in your graphs involving the `day_of_week` variable.)
+b.  Rename with `fct_recode`.  
+  Change order by first appearance with `fct_inorder`.  
+  Change order by frequency with `fct_infreq`.  
+  Change order by reverse frequency with `fct_infreq` then `fct_rev`.  
 
-b.  Read [this introduction](https://blog.rstudio.org/2016/08/31/forcats-0-1-0/) to the `forcats` package, which was designed to work with categorical data in `R`.  Install and load the `forcats` package to your computer.  Answer the following:
+c.  
+```{r}
+library(forcats)
 
-+  What function in the `forcats` package can be used to rename categories?
-+  What function in the `forcats` package can be used to reorder the categories in the order of first appearance in the dataset?
-+  What function in the `forcats` package can be used to reorder the categories according to their frequency?
-+  What combination of functions in the `forcats` package can be used to reorder the categories according to the reverse order of their frequency?
+ggplot(days_stars, aes(x = fct_rev(fct_reorder(day_of_week, count)), y = count, fill = less_than_7_star)) +
+    geom_bar(stat = "identity") +
+    labs(x = "Day of Week",
+         y = "Count", 
+         title = "Counts of Votes Across Day of Week",
+         fill = "Less than 7 Stars")
+```
 
-c.  Recreate the plot in Problem 4, part (e), but this time, order the categories from most frequent to least frequent.
 
-d. Recreate the plot in Problem 4, part (f), but this time, order the categories from least frequent to most frequent.
+d. 
+```{r}
+g1 <- ggplot(mateys_movies, aes(x = fct_rev(fct_infreq(day_of_week)), fill = less_than_7_star)) +
+    geom_bar(position = "dodge") +
+    dow_star_labs
 
-e. Recreate the plot in Problem 4, part (g), but this time, order the categories in a logical order (e.g. Monday, Tuesday, ..., Sunday; or Sunday, Monday, ..., Saturday).
+g2 <- ggplot(days_stars, aes(x = fct_reorder(day_of_week, count), y = count, fill = less_than_7_star)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    dow_star_labs
 
-f.  Recreate the plot from the previous part (Problem 5, part (e)), but this time, rename the categories so that they use the following day abbreviations:  M, Tu, W, Th, F, Sa, Su
+grid.arrange(g1, g2, ncol = 1)
+```
 
-g.  Now that you have a graph that visualizes the categories **in their correct order**, interpret the plot in (e) or (f).  Describe any interesting features of the relationship between `day_of_week` and `less_than_7_stars`.  
+
+e. 
+```{r}
+dow_abbr <- c(Su = "Sunday", M = "Monday", Tu = "Tuesday", W = "Wednesday",
+              Th = "Thursday", F = "Friday", Sa = "Saturday")
+g1 <- ggplot(mateys_movies, aes(x = fct_relevel(day_of_week, dow_order),
+                                fill = less_than_7_star)) +
+    geom_bar(position = "fill") +
+    dow_star_prop_labs
+
+g2 <- ggplot(days_stars, aes(x = fct_relevel(day_of_week, dow_order),
+                             y = count, fill = less_than_7_star)) +
+    geom_bar(stat = "identity", position = "fill") +
+    dow_star_prop_labs +
+    theme(axis.text.x = element_text(angle = 45))
+
+grid.arrange(g1, g2, ncol = 1)
+```
+
+
+f.  
+```{r}
+dow_abbr <- c(Su = "Sunday", M = "Monday", Tu = "Tuesday", W = "Wednesday",
+              Th = "Thursday", F = "Friday", Sa = "Saturday")
+g1 <- ggplot(mateys_movies, aes(x = fct_recode(fct_relevel(day_of_week, dow_order), !!!dow_abbr),
+                                fill = less_than_7_star)) +
+    geom_bar(position = "fill") +
+    dow_star_prop_labs
+
+g2 <- ggplot(days_stars, aes(x = fct_recode(fct_relevel(day_of_week, dow_order), !!!dow_abbr),
+                             y = count, fill = less_than_7_star)) +
+    geom_bar(stat = "identity", position = "fill") +
+    dow_star_prop_labs +
+    theme(axis.text.x = element_text(angle = 45))
+
+grid.arrange(g1, g2, ncol = 1)
+```
+
+g.  The proportion of Less than 7 Stars seems to rise from Sunday to Monday, then back down until Wednesday, before rising on Thursday and back down until Saturday. It is almost as there is an oscillation in the proportions across day of weeks.
 
 
 ***
@@ -255,8 +380,6 @@ g.  Now that you have a graph that visualizes the categories **in their correct 
 (3 points each)
 
 **Incorporating Statistical Information Into Graphs**
-
-For this problem we will create a new dataset based on Matey's IMDb movie ratings.
 
 ```{r, warning = FALSE, message = FALSE}
 
@@ -276,20 +399,43 @@ days_movie_counts <- mateys_movies %>%  #  Start with the mateys_movies data.fra
   mutate(total = sum(count),  #  add total number of observations
          proportion = count / total,  #  add proportions
          percentage = proportion * 100,  #  add percentages
-         std_error = 66,  #  add standard error of each proportion
+         std_error = sqrt(proportion * (1 - proportion) / total),  #  add standard error of each proportion
          lower = proportion - 1.96 * std_error,  #  compute lower bound
          upper = proportion + 1.96 * std_error)  #  compute upper bound
 
 days_movie_counts
 ```
 
-a.  There is an obvious mistake in the code above:  the standard error is set to be 66.  Update this line of code so that the appropriate standard error is calculated.  See your notes from last week to do this.
+a.  Fixed standard error.
 
-b.  Make a bar chart of the percentages and a bar chart of the proportions using `stat = "identity"` in `geom_bar()`.  Arrange these into a 1x2 grid (1 row, 2 columns).  Make sure the graphs are properly labeled/titled, and text don't overlap.  What is the difference between these two graphs?
+b.  The difference in the two graphs is in the y-axis scale.
+```{r fig.width = 10}
+g1 <- ggplot(days_movie_counts, aes(x = day_of_week, y = percentage)) +
+    geom_bar(stat = "identity") +
+    labs(x = "Day of Week", y = "Percentage", title = "Percentages of Movies by Day of Week") +
+    theme(axis.text.x = element_text(angle = 45))
 
-c.  Add error bars to the proportions graph.  To do this, use the `geom_errorbar()` function, and be sure to specify the `ymin` and `ymax` parameters so that they correspond to the already-calculated lower and upper bounds.  E.g., `ggplot(...) + ... + geom_errorbar(aes(ymin = ..., ymax = ...))`.  
+g2 <- ggplot(days_movie_counts, aes(x = day_of_week, y = proportion)) +
+    geom_bar(stat = "identity") +
+    labs(x = "Day of Week", y = "Proportion", title = "Proportions of Movies by Day of Week") +
+    theme(axis.text.x = element_text(angle = 45))
 
-d.  Are the proportions of movies Matey rated on Mondays and on Sundays significantly different? How about the proportions on Sundays vs Thursdays? How do you know?
+
+grid.arrange(g1, g2, ncol = 2)
+```
+
+
+c.  
+```{r}
+ggplot(days_movie_counts, aes(x = day_of_week, y = proportion)) +
+    geom_bar(stat = "identity") +
+    geom_errorbar(aes(ymin = lower, ymax = upper)) +
+    labs(x = "Day of Week", y = "Proportion", title = "Proportions of Movies by Day of Week") +
+    theme(axis.text.x = element_text(angle = 45))
+```
+
+
+d.  The proportions of movies rated on Mondays and on Sundays are not significantly different as their 95% confidence intervals overlap, but Sunday's and Thursday's do not so they are significantly different.
 
 
 ***
@@ -306,11 +452,36 @@ The following code will produce a graph of the marginal distribution of the movi
 
 ```{r, warning = FALSE, message = FALSE}
 ggplot(mateys_movies, aes(x = movie_period, fill = ratings)) + 
-  geom_bar()
+  geom_bar() +
+  labs(fill = "Matey's Rating")
 ```
 
-a.  Add ` + labs(fill = "Matey's Rating")` to the graph above.  What happens?
+a.  The legend's label is changed.
+b.  Already changed the legend's label.  
 
-b.  Recreate the graph from Problem 5, part (f), but this time, adjust the legend title to be something more appropriate.
+```{r}
+dow_abbr <- c(Su = "Sunday", M = "Monday", Tu = "Tuesday", W = "Wednesday",
+              Th = "Thursday", F = "Friday", Sa = "Saturday")
+g1 <- ggplot(mateys_movies, aes(x = fct_recode(fct_relevel(day_of_week, dow_order), !!!dow_abbr),
+                                fill = less_than_7_star)) +
+    geom_bar(position = "fill") +
+    dow_star_prop_labs
 
-c.  Search the internet and identify an approach for repositioning legends in `ggplot()` graphics.  Recreate the graph from part (b), but this time, move the legend below the graph.
+g2 <- ggplot(days_stars, aes(x = fct_recode(fct_relevel(day_of_week, dow_order), !!!dow_abbr),
+                             y = count, fill = less_than_7_star)) +
+    geom_bar(stat = "identity", position = "fill") +
+    dow_star_prop_labs +
+    theme(axis.text.x = element_text(angle = 45))
+
+grid.arrange(g1, g2, ncol = 1)
+```
+
+
+c.  
+```{r}
+g1  <- g1 + theme(legend.position = "bottom")
+g2  <- g2 + theme(legend.position = "bottom")
+
+grid.arrange(g1, g2, ncol = 1)
+```
+
