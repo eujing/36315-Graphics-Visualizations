@@ -145,29 +145,74 @@ d.  There are more than expected counts in Monday and Tuesday AM, Saturday and S
 
 **Introduction to Continuous Data -- Histograms**
 
-In this problem, we'll introduce continuous data using the `mtcars` dataset.  
 
-a.  (4 points)  Read the help file for the `mtcars` dataset.  What is the description of the `mtcars` dataset?  List 3 continuous variables included in the `mtcars` dataset?
+a.   The data was extracted from the 1974 _Motor Trend_ US magazine,
+     and comprises fuel consumption and 10 aspects of automobile design
+     and performance for 32 automobiles (1973-74 models).
+
+     Some continuous variables are the mpg, disp, and hp.
 
 ```{r}
 library(datasets)
 data(mtcars)
-#?mtcars # remember don't leave `help(...)` or ?(...) in your submitted code
 ```
 
-The `mtcars` dataset contains mostly continuous variables.  Let's visualize the marginal distributions of several of those continuous variables.  First, we'll use histograms.  Histograms divide the range of a continuous variable into (usually equal-sized) bins, then count how many observations fall into each one of these bins.  The resulting counts in each bin are displayed in a similar fashion to bar charts.
+b.  
 
-b.  (10 points)  Create a histogram showing the marginal distribution of the `mpg` variable.  Remember, `ggplot()` is flexible:  the way you create a histogram is very similar to how we would create a bar chart with categorical data.  Just add `geom_histogram()` where you would normally have `geom_bar()`.  Be sure that your axes are properly labeled, that your graph has an appropriate title (e.g. "Histogram of Miles per [units]" or "Distribution of Miles per (units)").  Be sure to specify the units where appropriate (e.g. title, labels, legend, etc).  Look at the help file for the `mtcars` dataset to find information on the units.
+```{r warning = F, message = F}
+ggplot(mtcars, aes(x = mpg)) +
+    geom_histogram() +
+    labs(x = "Miles per Gallon",
+         y = "Count",
+         title = "Distribution of Miles per Gallon")
+```
 
-c.  (10 points)  Create another histogram of the time to complete a 1/4 mile track variable, but this time, add the following to your code:  `geom_histogram(breaks = seq(14, 26, by = 2), col = "red", fill = "green", alpha = .2)`.
+c.  
 
-+  What did this change about the graph (aside from the coloring)?
-+  Try a few new values of the `alpha` parameter.  What are the possible values you can use for `alpha`?  What happens when you decrease `alpha`?  What happens when you increase `alpha`?  What is the default for `alpha` (i.e. if you do not specify it in your code)?
-+  Type `seq(14, 26, by = 2)` into the command line.  What does the `seq()` function do?
+```{r}
+ggplot(mtcars, aes(x = qsec)) +
+    geom_histogram(breaks = seq(14, 26, by = 2),
+                   col = "red",
+                   fill = "green",
+                   alpha = 0.9) +
+    labs(x = "Quarter Mile Time (sec)",
+         y = "Count",
+         title = "Distribution of Quarter Mile Times (sec)")
+```
+
+There are less bins in that the variable is more discretized.  
+Alpha goes from 0 to 1, with lower values being more transparent and higher values being more opaque. The default is 1.0  
+The `seq` command creates a sequence of numbers from 14 to 26 in this case, in intervals of 2.  
+
     
-d.  (10 points)  Create another histogram of the time to complete a 1/4 mile track variable, but this time, add the following to your code:  `geom_histogram(binwidth = 1)`.  Try a few different values for the `binwidth`.  What does this parameter do?
+d.  
 
-e.  (10 points)  Create another histogram of the time to complete a 1/4 mile variable, but this time, add the following to your code:  `geom_histogram(breaks = c(0, 13, 15, 17, 17.5, 18, 20, 23), col="red", fill="green")`.  Do your best to describe the distribution of the `qsec` variable using this graph.  (Note:  Here, we changed the width of the bins in the histogram.  This makes the graph very confusing for the viewer because of the design variation.  I do not recommend doing this in practice.  That said, it's important that you know that it's possible to do so.)
+```{r}
+ggplot(mtcars, aes(x = qsec)) +
+    geom_histogram(binwidth = 1,
+                   col = "red",
+                   fill = "green",
+                   alpha = 0.9) +
+    labs(x = "Quarter Mile Time (sec)",
+         y = "Count",
+         title = "Distribution of Quarter Mile Times (sec)")
+```
+
+This parameter sets the width of each bin, so larger binwidths results in higher discretization.
+
+e.  
+
+```{r}
+ggplot(mtcars, aes(x = qsec)) +
+    geom_histogram(breaks = c(0, 13, 15, 17, 17.5, 18, 20, 23),
+                   col = "red",
+                   fill = "green") +
+    labs(x = "Quarter Mile Time (sec)",
+         y = "Count",
+         title = "Distribution of Quarter Mile Times (sec)")
+```
+
+This graph is hard to interpret accurately due to the varying widths, but we can roughly say that the distribution appears bimodal around 15 and 20 seconds, with a higher proportion of timings around 20 sec compared to 15 secs.
 
 
 ***
