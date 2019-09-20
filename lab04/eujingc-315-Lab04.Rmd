@@ -1,0 +1,223 @@
+---
+title: "36-315 Lab 04"
+author: "Eu Jing Chua"
+date: "Due Sep 20 2019 (6:30pm)"
+output: 
+  html_document:
+    toc:  true
+    toc_float:  true
+    code_folding:  show
+---
+
+
+***General instructions for all assignments***: 
+
++  Use this file as the template for your submission.  Delete the unnecessary text (e.g. this text, the problem statements, etc).  That said, keep the nicely formatted "Problem 1", "Problem 2", "a.", "b.", etc
++  Upload a single `R` Markdown file (named as:  [AndrewID]-315-Lab04.Rmd -- e.g. "mneykov-315-Lab04.Rmd") to the Lab 02 submission section on Canvas.  You do not need to upload the .html file.
++  The instructor and TAs will run your .Rmd file on their computer.  **If your .Rmd file does not knit on our computers, you will be automatically get 0.**
++  Your file should contain the code to answer each question in its own code block.  Your code should produce plots/output that will be automatically embedded in the output (.html) file
++  Each answer must be supported by written statements (unless otherwise specified)
++  Include the name of anyone you collaborated with at the top of the assignment
++  Include the style guide you used at the top of the assignment
+
+<!--
+
+In this week's assignments, we'll finish our discussion of strictly categorical data and move on to continuous data.
+
+
+***
+***
+
+
+#  Oral Evaluation Graphic
+
+**Note:  You have to look at the HTML file on Canvas to see the oral evaluation graphic**
+
+Here is this week's oral evaluation graphic:
+
+<div style="width:750px">
+![](https://raw.githubusercontent.com/mateyneykov/315_code_data/master/images/truecar.png)
+</div>
+
+
+**Matey Says**:  It's important to avoid inserting your own commentary when discussing graphics  Your job, as a statistician / data scientist / quantitative analyst, is to interpret the graph for the viewer.  Discuss the facts presented via the data/graphic; avoid overstepping your boundaries by inserting your own opinions into what should be a presentation of facts.
+
+Reminder, the following strategy is ideal when presenting graphs orally:
+
++  First, explain what is being shown in the graph.  What is being plotted on each axis?  What do the colors correspond to?  What are the units (if applicable)?  What are the ranges of different variables (if applicable)?  Where does the data come from (if applicable)?
+
++  Next, explain the main takeaway of the graph.  What do you want the viewer to understand after having seen this graph?
+
++  If applicable, explain any secondary takeaways or other interesting findings.
+
++  Finally, for this class, but not necessarily in general:  Critique the graph.  What do you like/dislike?  What would you keep/change?  Etc.
+
+
+***
+***
+
+
+***
+***
+
+-->
+
+#  Problem 1
+
+(5 points each)
+
+**Chi-Square Tests for Independence in `R`**:  
+
+In this assignment, we'll use data from the Twitter Airline Sentiment dataset, which can be found here:  [https://raw.githubusercontent.com/mateyneykov/315_code_data/master/data/Tweets.csv]. When reading in the data, we will assign it to a variable called `airline_tweets`. 
+
+First read the dataset in from GitHub and add some additional variables (code provided). Then complete the following questions.
+
+```{r, warning = F, message = F}
+library(tidyverse)
+library(reshape2)
+
+#  Read in data
+airline_tweets <- read_csv("https://raw.githubusercontent.com/mateyneykov/315_code_data/master/data/Tweets.csv")
+
+date_time <- colsplit(airline_tweets$tweet_created, " ", c("date", "time", "zone"))
+
+#  Add start_date variable to airline_tweets, and a bunch of other variables
+airline_tweets <- mutate(airline_tweets,
+                    start_date = as.Date(date_time$date, format = "%Y-%m-%d"),
+                    hour_of_day = as.integer(substr(date_time$time, 1, 2)),
+                    am_or_pm = ifelse(hour_of_day < 12, "AM", "PM"),
+                    day_of_week = weekdays(start_date),
+                    weekend = ifelse(day_of_week %in% c("Saturday", "Sunday"), 
+                                     "Weekend", "Weekday"),
+                    tweet_length = ifelse(nchar(text) > 100, "Long", "Short"))
+```
+
+a.  Create a contingency table of the `airline` and `airline_sentiment` variables using the `table()` function, and store this in an object called `tab1a`.  Then, test to see if these two variables are independent using a chi-square test with the following code:  `chisq.test(tab1a)`.  
+
++  What information is returned from the chi-square test?  
++  What is the chi-square test statistic?
++  What is the p-value of the test? 
++  What is your conclusion -- is there enough evidence to reject the null hypothesis that the two variables independent?
+
+b.  Repeat part (a), but this time, re-order the variables in the table function.  Do the test results change?  Does this make sense?  Why or why not?
+
+c.  Repeat part (a), but this time, test the independence of the `day_of_week` and `am_or_pm` variables.  This time, interpret the result of the chi-square test for independence **in the context of the problem**.  Do you think your result makes sense in the context of the problem?
+
+d.  Repeat part (c), but this time, test the independence of the `am_or_pm` and `tweet_length` variables.  Be sure to interpret the result **in the context of the problem**.  Do you think this result makes sense, given what we might expect about the length of different tweets?
+
+
+***
+***
+
+
+#  Problem 2
+
+**Mosaic Plots**
+
+NOTE: If the ggplot version of mosaic does not work,
+use the basic R command: mosaicplot
+
+
+Before you begin this problem please make sure the following package is installed and loaded:
+
+```{r, warning = FALSE}
+## uncomment the line below
+# library(matrixStats)
+
+## if you get an error uncomment
+# install.packages("matrixStats")  
+
+## and try again
+# library(matrixStats)
+```
+
+**Remember to remove the `install.packages(...)` line from your submission.**
+
+There is no official, `ggplot()`-sanctioned code for creating mosaic plots in `ggplot()`, which colors the plot with the standardized Pearson residuals. That is why we will use a **geometry** specifically for mosaic plots, called `geom_mosaic()`.  (Kudos to Statistics Prof Sam Ventura and PhD student Peter Elliott for writing this code!)  
+
+In order to use `geom_mosaic()`, you need to download it from the course GitHub page.  To do this, first **install the `devtools` package.**  
+
+Then, use the following code to source the `geom_mosaic()` function code directly from the course GitHub page:
+
+```{r, warning = F, message = F}
+source("https://raw.githubusercontent.com/mateyneykov/315_code_data/master/code/geom_mosaic.R")
+```
+
+(Note that we also wrote a custom legend function to be used with `geom_mosaic()`, called `mosaic_legend()`.  This will download automatically when you run the above code.)
+
+For each of parts (a)--(d) in Problem 1, create the corresponding mosaic plot for the two variables being tested (4 points each).  Example code is provided for the mosaic plot for part (a):
+
+```{r, warning = F, message = F}
+ggplot(airline_tweets, aes(x = airline, y = airline_sentiment)) +
+  geom_mosaic() + mosaic_legend()
+```
+
+Remember to add a title and appropriate axis labels to the mosaic plots.  Also, note that in this implementation, the locations of the x- and y-axis tick marks do not necessarily line up with the locations of the boxes.
+
+
+
+***
+***
+
+
+#  Problem 3
+
+**Interpretting Mosaic Plots**
+
+Recall that mosaic plots color each box according to the standardized Pearson residuals.  If any of the residuals are greater than 2 or less than -2, we can conclude that there is evidence against the null hypothesis of independence.  
+
+As such, when interpretting a mosaic plot:
+
++  If all of the cells in the mosaic plot are white, there is not enough evidence to reject the null hypothesis that the two variables are indepenedent
++  **If any of the cells in the mosaic plot are red or blue, there is evidence against the null hypothesis that the two variables are independent.**
++  Red cells indicate statistically significant negative deviations from what would be expected under independence
++  Blue cells indicate statistically significant positive deviations from what would be expected under independence
++  The darker the color, the larger the deviation
+
+
+With this in mind, answer the following questions:
+
+a.  (5 points)  Do the mosaic plots in Problem 2 yield the same conclusions as the chi-square tests from Problem 1 (about whether the two variables being plotted in each mosaic plot are independent)?
+
+b.  (5 points)  What do the widths of the bars in the mosaic plot for Problem 2 part (c) correspond to?
+
+c.  (5 points)  What do the heights of the bars in the mosaic plot for Problem 2 part (d) correspond to?
+
+d.  (5 points)  For the mosaic plot for Problem 2 part (c), which cells (or combinations of categories) have observed counts that are significantly higher than what we would expect under independence (if any)?  Which have observed counts that are significantly lower than what would be expected under independence (if any)?
+
+
+***
+***
+
+
+#  Problem 4
+
+**Introduction to Continuous Data -- Histograms**
+
+In this problem, we'll introduce continuous data using the `mtcars` dataset.  
+
+a.  (4 points)  Read the help file for the `mtcars` dataset.  What is the description of the `mtcars` dataset?  List 3 continuous variables included in the `mtcars` dataset?
+
+```{r}
+library(datasets)
+data(mtcars)
+#?mtcars # remember don't leave `help(...)` or ?(...) in your submitted code
+```
+
+The `mtcars` dataset contains mostly continuous variables.  Let's visualize the marginal distributions of several of those continuous variables.  First, we'll use histograms.  Histograms divide the range of a continuous variable into (usually equal-sized) bins, then count how many observations fall into each one of these bins.  The resulting counts in each bin are displayed in a similar fashion to bar charts.
+
+b.  (10 points)  Create a histogram showing the marginal distribution of the `mpg` variable.  Remember, `ggplot()` is flexible:  the way you create a histogram is very similar to how we would create a bar chart with categorical data.  Just add `geom_histogram()` where you would normally have `geom_bar()`.  Be sure that your axes are properly labeled, that your graph has an appropriate title (e.g. "Histogram of Miles per [units]" or "Distribution of Miles per (units)").  Be sure to specify the units where appropriate (e.g. title, labels, legend, etc).  Look at the help file for the `mtcars` dataset to find information on the units.
+
+c.  (10 points)  Create another histogram of the time to complete a 1/4 mile track variable, but this time, add the following to your code:  `geom_histogram(breaks = seq(14, 26, by = 2), col = "red", fill = "green", alpha = .2)`.
+
++  What did this change about the graph (aside from the coloring)?
++  Try a few new values of the `alpha` parameter.  What are the possible values you can use for `alpha`?  What happens when you decrease `alpha`?  What happens when you increase `alpha`?  What is the default for `alpha` (i.e. if you do not specify it in your code)?
++  Type `seq(14, 26, by = 2)` into the command line.  What does the `seq()` function do?
+    
+d.  (10 points)  Create another histogram of the time to complete a 1/4 mile track variable, but this time, add the following to your code:  `geom_histogram(binwidth = 1)`.  Try a few different values for the `binwidth`.  What does this parameter do?
+
+e.  (10 points)  Create another histogram of the time to complete a 1/4 mile variable, but this time, add the following to your code:  `geom_histogram(breaks = c(0, 13, 15, 17, 17.5, 18, 20, 23), col="red", fill="green")`.  Do your best to describe the distribution of the `qsec` variable using this graph.  (Note:  Here, we changed the width of the bins in the histogram.  This makes the graph very confusing for the viewer because of the design variation.  I do not recommend doing this in practice.  That said, it's important that you know that it's possible to do so.)
+
+
+***
+***
