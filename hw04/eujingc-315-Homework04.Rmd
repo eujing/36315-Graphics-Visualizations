@@ -1,0 +1,354 @@
+---
+title: "36-315 Homework 04, Fall 2019"
+author: "Eu Jing Chua"
+date: "Due Sept 25 (11:00pm ET) on Canvas"
+output: 
+  html_document:
+    toc:  true
+    toc_float:  true
+    code_folding:  show
+---
+
+
+##  Homework 04:  Mosaic Plots and Continuous Data
+
+***
+***
+#  Problem 0
+
+**Style Guide and Tabbed HTML Output**
+
+a.  Using the tidyverse style guide.
+
+***
+***
+
+#  Problem 1
+
+**Critiquing Graphs**:
+
+a.  
+
+![](https://i.redd.it/mo8g1ti53lo31.png)
+
+
+b.  The graph shows the percentage of people from each region in Germany that voted for parties that thinks Germany should reintroduce border controls.  
+    The percentage is visualized with a color map, with dark for lesser and light for higher percentages.  
+    The result is that it can be seen that more of South-Eastern Germany prefers such parties.
+
+c.  The graph does a good job at achieving its goals.  
+    The title perfectly sums up the context and the legend adds more information without using too much ink.  
+    There is some slight distortion as instinct is to intepret the findings as people who directly want border controls to be reintroduced, but on further reading is actuall a correlation with the party they vote for.  
+    The strengths are in effectively portraying the party preferences in each geographical area, but the weakness is in the potentially misleading intepretation between party preference and the people's actual opinion on the matter.  
+    I would add labels of the major cities and the surrounding countries.
+
+d.  The titles and the legend does enhance the user's understanding as it fully explains the context.  
+    I would include more geographical labels to encourage more analysis into the major cities and surrounding countries.
+
+***
+***
+
+
+#  Problem 2
+
+
+Both Mosaic plots and stacked bar charts show the distributions of categorical data, but in different ways.  
+Stacked bar charts make it easy to see the marginal distribution of the variable not being stacked through the overall height of each bar, however not so for the other variable being stacked. Colors are used to differentiate the categories of the variable being stacked. It is also possible to read off actual counts.  
+Mosaic plots make it easy to see both the marginal and conditional distributions of both variables, with the advantage of being able to roughly inspect for independence as the area of each section is proportional to the particular proportion. A color map can make this more obvious, to indicate the magnitude of the pearson residuals. However, it only shows proportions.
+
+
+***
+***
+
+
+#  Problem 3
+
+(15 points)
+
+**All of the 2-D Categorical Plots**
+
+a.  
+
+```{r, warning = F, message = F}
+library(tidyverse)
+library(reshape2)
+library(matrixStats)
+
+source("https://raw.githubusercontent.com/mateyneykov/315_code_data/master/code/geom_mosaic.R")
+
+#  Read in data
+airline_tweets <- read_csv("https://raw.githubusercontent.com/mateyneykov/315_code_data/master/data/Tweets.csv")
+
+date_time <- colsplit(airline_tweets$tweet_created, " ", c("date", "time", "zone"))
+
+#  Add start_date variable to airline_tweets, and a bunch of other variables
+airline_tweets <- mutate(airline_tweets,
+                    start_date = as.Date(date_time$date, format = "%Y-%m-%d"),
+                    hour_of_day = as.integer(substr(date_time$time, 1, 2)),
+                    am_or_pm = ifelse(hour_of_day < 12, "AM", "PM"),
+                    day_of_week = weekdays(start_date),
+                    weekend = ifelse(day_of_week %in% c("Saturday", "Sunday"), 
+                                     "Weekend", "Weekday"),
+                    tweet_length = ifelse(nchar(text) > 100, "Long", "Short"))
+```
+
+```{r}
+g_sentiment <- ggplot(airline_tweets, aes(x = airline, y = airline_sentiment))
+g_labs <- labs(x = "Airline", y = "Count", fill = "Sentiment",
+               title = "Distribution of Sentiment by Airline")
+
+ggplot(airline_tweets, aes(x = airline, fill = airline_sentiment)) +
+    geom_bar(position = "dodge") +
+    g_labs
+ggplot(airline_tweets, aes(x = airline, fill = airline_sentiment)) +
+    geom_bar() +
+    g_labs
+ggplot(airline_tweets, aes(x = airline, y = airline_sentiment)) +
+    geom_mosaic() +
+    mosaic_legend() +
+    g_labs +
+    labs(title = "Pearson Residuals of Sentiment by Airline")
+ggplot(airline_tweets, aes(x = airline, fill = airline_sentiment)) +
+    geom_bar(position = "fill") +
+    g_labs + labs(y = "Proportion")
+ggplot(airline_tweets, aes(x = airline_sentiment)) +
+    geom_bar() +
+    facet_wrap(~ airline, ncol = 3) +
+    labs(x = "Sentiment", y = "Count",
+         title = "Distribution of Sentiment by Airline")
+```
+
+b.  I prefer the facetted bar chart as I can focus on each conditional distribution more easily.
+
+c.  It is easiest to see the marginal distribution of airlines in the stacked bar chart, as I can tell straight off the heights of each bar.
+    It is easiest to see the conditional distributions in the facetted bar chart as each facet is conditioned on an airline already.  
+    The mosaic plot has the best balance of showing both types of distributions. We can tell the marginal from the widths, and the conditional from the height within each column.  
+    It is also the easiest to see the outcome of a chi-square test from the mosaic plot, as the colors indicate the test statistic, with red or blue being significant at roughly a 95% level.
+
+***
+***
+
+
+#  Problem 4
+
+**Matey's IMDb Ratings**
+
+```{r, warning = FALSE, message = FALSE}
+library(tidyverse)
+mateys_imdb <- read_csv("https://raw.githubusercontent.com/mateyneykov/315_code_data/master/data/mateys_imdb_ratings.csv")
+
+# filters only Featured Films
+mateys_movies <- mateys_imdb %>% filter(`Title type` == "Feature Film")
+
+mateys_movies <- mutate(mateys_movies, 
+                    vote_date = as.Date(mateys_movies$created, 
+                                format = "%a %b %d %H:%M:%S %Y"),
+                    day_of_week = weekdays(vote_date),
+                    weekend = ifelse(day_of_week %in% c("Saturday", "Sunday"), 
+                                     "Weekend", "Workday"),
+                    duration = cut(`Runtime (mins)`, c(0, 90, 120, Inf), 
+                                        labels = c("Short", "Medium", "Long")),
+                    ratings = cut(`You rated`, c(0, 4, 7, Inf),
+                                  labels = c("Low", "Med", "High")),
+                    imdb_ratings = cut(`IMDb Rating`, c(0, 4, 7, Inf),
+                                  labels = c("Low", "Med", "High")),
+                    movie_period = cut(Year, c(0, 1980, 2000, Inf),
+                              labels = c("Old", "Recent", "New"))
+)
+```
+
+a.  Genre, the type of movie.  
+    Day of week, the day on which the vote was made.  
+    Ratings, whether Matey have a low, medium or high rating.  
+
+b.  The continuous variables are `Runtime (mins)` from 69 to 229, `You rated` from 1 to 10, `Num. Votes` from 197 to 1846141 and `Year` from 1954 to 2017.  
+    These are continous to me as they are all numerical, even if some of them are integers and henced discretized.  
+
+
+c.  
+```{r warning=F}
+chisq.test(with(mateys_movies, table(ratings, movie_period)))
+ggplot(mateys_movies, aes(x = ratings, y = movie_period)) +
+    geom_mosaic() +
+    mosaic_legend() +
+    labs(y = "Rating", x = "Movie Period",
+         title = "Pearson Residuals of Rating by Movie Period")
+```
+
+Since the p-value is so low, and from the colored blocks in the mosaic plot, we have sufficient evidence to reject the null hypothesis and conclude that ratings and movie period are not independent.
+
+d.  
+```{r}
+ggplot(mateys_movies, aes(x = imdb_ratings, fill = ratings)) +
+    geom_bar(position = "dodge") +
+    labs(x = "IMDB Ratings", y = "Count", fill = "Matey's Ratings",
+         title = "Distribution of Ratings")
+```
+
+There is a positive correlation between the IMDB ratings and Matey's, as the high IMDB ratings have a higher proportion of high ratings from Matey.  
+There are also no low category in imdb ratings as the lowest rating is 4.1, but we defined a low rating to be from 0 to 4.  
+
+```{r}
+mateys_movies <- mutate(mateys_movies,
+    ratings_new = cut(`You rated`, c(0, 7, 8, Inf),
+                  labels = c("Low", "Med", "High")),
+    imdb_ratings_new = cut(`IMDb Rating`, c(0, 7, 8, Inf),
+                  labels = c("Low", "Med", "High")))
+
+ggplot(mateys_movies, aes(x = imdb_ratings_new, fill = ratings_new)) +
+    geom_bar(position = "dodge") +
+    labs(x = "IMDB Ratings", y = "Count", fill = "Matey's Ratings",
+         title = "Distribution of Ratings")
+```
+
+We still see some correlation between the IMDB ratings and Mateys's ratings, which indicate they may not be independent.
+
+
+***
+***
+
+
+#  Problem 5
+
+**Introduction to Continuous Data -- Box Plots**
+
+a.  
+```{r}
+data(mtcars)
+
+ggplot(data = mtcars, aes(x = factor(1), y = wt)) +
+    geom_boxplot(fill = "darkred") +
+    labs(x = "", y = "Weight (1000 lbs)", title = "Distribution of Weight (1000 lbs)") +
+    theme(axis.text.x = element_blank())
+```
+
+
+b.  The distribution shows a higher concentration of heavier weight cars closer to 3500 lbs, skewed to the left. It also has 3 outliers that are very heavy, above 5000 lbs.  
+    Boxplots show the skew of the distribution well as well as outliers, but does not work well for interpreting multi-modal distributions.
+
+***
+***
+
+
+
+#  Problem 6
+
+(3 points each)
+
+**Critiquing Boxplots**
+
+a.  The definition seems to only work well for symmetric distributions, and the choice of IQR range seems arbitrary.
+
+b.  Instead of a box, we could use the horizontal axis to describe the density at that percentile with some contours, allowing us to see the actual distribution better.
+
+c.  
+```{r}
+ggplot(data = mateys_movies, aes(x = factor(1), y = `IMDb Rating`)) +
+    geom_boxplot(alpha = 0.5, fill = "lightblue") +
+    labs(x = "", y = "IMDb Rating", title = "Distribution of IMDb Rating") +
+    theme(axis.text.x = element_blank())
+```
+
+There are many outlier low ratings according to the boxplot. Adding alpha also made the outliers turn transparent as they are part of the data.
+
+
+d.  
+```{r}
+ggplot(data = mateys_movies, aes(x = duration, y = `IMDb Rating`)) +
+    geom_boxplot(aes(fill = duration)) +
+    labs(x = "Duration", y = "IMDb Rating", title = "Distribution of IMDb Rating by Duration",
+         fill = "Duration")
+```
+
+It seems as duration gets longer, the conditional distribution of the IMDb rating is centered around a higher value in general.
+
+
+e.  
+```{r}
+ggplot(data = mateys_movies, aes(x = movie_period, y = `IMDb Rating`)) +
+    geom_boxplot(aes(fill = movie_period)) +
+    labs(x = "Movie Period", y = "IMDb Rating", title = "Distribution of IMDb Rating by Movie Period",
+         fill = "Movie Period")
+```
+
+***
+***
+
+
+#  Problem 7
+
+**Histograms**
+
+a.  
+```{r}
+ggplot(mateys_movies, aes(x = `IMDb Rating`)) +
+    geom_histogram(bins = 20) +
+    labs(x = "IMDb Rating", y = "Count", title = "Distribution of IMDb Rating")
+```
+
+
+b.  
+```{r warning=F}
+ggplot(mateys_movies, aes(x = Year)) +
+    geom_bar() +
+    labs(x = "Year", y = "Count", title = "Distribution of Year")
+```
+
+
+c.  
+```{r warning=F}
+ggplot(mateys_movies, aes(x = Year)) +
+    geom_histogram(binwidth = 1) +
+    labs(x = "Year", y = "Count", title = "Distribution of Year")
+```
+
+This graph is roughly the same as the one in (b), but with no gaps between the bars.
+
+d.  
+```{r warning=F}
+ggplot(mateys_movies, aes(x = Year)) +
+    geom_histogram(binwidth = 5) +
+    labs(x = "Year", y = "Count", title = "Distribution of Year")
+```
+
+Most of the movies Matey rated were released around 2010.
+
+e.  
+```{r warning=F}
+ggplot(mateys_movies, aes(x = Year)) +
+    geom_histogram(binwidth = 5) +
+    facet_wrap(~ ratings) +
+    labs(x = "Year", y = "Count", title = "Distribution of Year by Ratings")
+```
+
+Matey tended to rate movies released around 2000 high, and those around 2010 medium.
+
+f. 
+```{r warning=F}
+ggplot(mateys_movies, aes(x = Year)) +
+    geom_histogram(binwidth = 5) +
+    facet_grid(ratings ~ ., margin = T) +
+    labs(x = "Year", y = "Count", title = "Distribution of Year by Ratings")
+```
+
+The conditional distributions are showed in a vertical arrangement, with an additional marginal distribution at the end.
+
+g. 
+```{r warning=F}
+ggplot(mateys_movies, aes(x = Year)) +
+    geom_histogram(binwidth = 5) +
+    facet_grid(ratings ~ ., scale = "free_y") +
+    labs(x = "Year", y = "Count", title = "Distribution of Year by Ratings")
+```
+
+The scale variable allowed us to indicate not to share all the y-axis scales and scale each individually.  
+It makes sense to do this when each facet will have very different scales.
+***
+***
+
+
+
+
+
+***
+***
