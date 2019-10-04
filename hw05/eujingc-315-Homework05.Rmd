@@ -1,0 +1,316 @@
+---
+title: "36-315 Homework 05, Spring 2019"
+author: "Your Name Here"
+date: "Due Wednesday, October 2, 2019 (11:00pm ET) on Canvas"
+output: 
+  html_document:
+    toc:  true
+    toc_float:  true
+    code_folding:  show
+---
+
+##  Homework 05:  Density Estimates, Histograms, and Parameter Selection
+
+***General instructions for all assignments***: 
+
++  Use this file as the template for your submission.  Delete the unnecessary text (e.g. this text, the problem statements, etc).  That said, keep the nicely formatted "Problem 1", "Problem 2", "a.", "b.", etc
++  Upload a single `R` Markdown file (named as:  [AndrewID]-315-HW05.Rmd -- e.g. "mneykov-315-HW05.Rmd") to the Homework 05 submission section on Canvas.  You do not need to upload the .html file.
++  The instructor and TAs will run your .Rmd file on their computers.  **If your .Rmd file does not knit on our computers, you will be automatically be deducted 10 points.**
++  Your file should contain the code to answer each question in its own code block.  Your code should produce plots/output that will be automatically embedded in the output (.html) file
++  Each answer must be supported by written statements (unless otherwise specified)
++  Include the name of anyone you collaborated with at the top of the assignment
++  Include the style guide you used below under Problem 0
+
+
+***
+***
+
+#  Problem 0
+
+**Style Guide and Tabbed HTML Output**
+
+a.  What style guide are you using on this assignment?  (Up to 10 points will be deducted if you do not adhere to a specific style guide.)
+
+b.  Remember to include a floating table of contents in your submission.
+
+
+***
+***
+
+
+#  Problem 1
+
+(5 points)
+
+**Theme and Build your #brand**
+
+a. (2 points) Read the documentation on `ggplot` themes [here](http://ggplot2.tidyverse.org/reference/theme.html).
+
+Using the graphic below, update it with a new theme.  In your new theme, use a white background, a different font style, a different font size, a different font color, and any additional changes that you choose. **Note:** if the title gets cut off when you update the font sizes make sure to use smart title creating practices to modify it.
+
+
+
+
+```{r warning = FALSE, message = FALSE}
+library(tidyverse)
+ggplot(iris,aes(x = Petal.Length, y = Petal.Width, color = Species)) +
+  geom_point() +
+  labs(
+    x = "Petal Length",
+    y = "Petal Width",
+    title = "Petal Measurements of Genetically Diverse Iris Populations",
+    caption = "Your Basic `Iris` Data"
+  ) +
+  theme(
+    panel.background = element_rect(fill = "white"),
+    plot.title = element_text(size = rel(1.3), face = "bold", color = "darkgrey"))
+```
+
+Use the example code in the above documentation if you have trouble.
+
+b. (3 points) Most data journalists use the same graphical theme, so that all graphs they create look the same way.  This is a good way to build your brand if you're doing any type of online data journalism.  Some examples:  The New York Times, FiveThirtyEight, Quartz, HuffingtonPost, The Washington Post, and many others.  It's also common practice to do this when writing academic papers, either for classes or journals.
+
+Create a new `ggplot()` theme.  To do that read the instructions below:
+
+Pick a font and color scheme of your choice.  Use a white or grey background in your theme, but feel free to use other colors elsewhere on the graph.  Feel free to adjust other thematic features as you see fit.  
+
+**Be somewhat conservative here.**  You don't want to distract the viewer with hot pink plot backgrounds and light green axes.  All text should be readable and easy on the eyes.
+
+**Use this theme for all parts of all problems for this homework!**  The same will go for all future assignments.
+
+**For this problem, just store your theme in a variable called `AndrewID_315_theme` (obviously, substitute your Andrew ID here).**  If you want you can write a function that allows you to supplant certain features of your theme if the need arises. This is not necessary, but you are welcome to do so. For your reference an example theme is posted below; **DO NOT just copy this theme!!!!**  Pick something that will be unique to YOU.
+
+```{r, warning = FALSE, message = FALSE}
+#Create theme that can be added to plots
+eujingc_315_theme <-  theme_bw() + # White background, black and white theme
+  theme(axis.text = element_text(size = 12),
+        plot.title = element_text(size = 14, face = "bold", hjust = 0)
+        text = element_text(size = 14, face = "bold", color = "darkslategrey"))
+```
+
+**A note on different fonts:** *Beyond italic, bold, etc fonts there is differences between Windows and Mac font selections (For example using `Times New Roman` for each OS is different - feel free to google this). We encourage you to learn how to use different fonts especially for later projects, but for homework submissions please don't include different font styles.*
+
+***
+***
+
+# Problem 2
+
+Congratulations!  We won't be doing too many more "critique a graph from the internet" problems for the rest of the semester.  It's important that you gain an understanding of how to do this early on in the course, so that you can build and develop your skills at writing about graphs.  For the most part, everyone has made some major strides in this area over the past few weeks.  I hope you enjoyed these exercises, and that you recognize the value in providing objective criticisms of others' work.
+
+(you can just delete this problem)
+
+
+***
+***
+
+
+#  Problem 3
+
+(20 points)
+
+##  Load the Red Wines Dataset
+
+**Load the Red Wines Dataset into R.**  This is a dataset provided [here](https://www.kaggle.com/piyushgoyal443/red-wine-dataset/data) by Kaggle.  Documentation for all of the variables is available at that link as well. The Wines Facts data is available on the Course GitHub page [here](https://raw.githubusercontent.com/mateyneykov/315_code_data/master/data/wineQualityInfo.txt).
+
+When you read it into `R`, store it in an object called `wine`, then complete the following problems.
+
+```{r, warning = FALSE, message = FALSE}
+wine <- read_csv("https://raw.githubusercontent.com/mateyneykov/315_code_data/master/data/wineQualityReds.csv")
+```
+
+***
+***
+
+## Actual Problem 
+
+**Density Estimates vs. Histograms**
+
+In this problem, we'll examine the distribution of `citric.acid` with density estimates, histograms, and rug plots.
+
+a.  (1 point)  Look at the help documentation for the `citric.acid` variable on Kaggle.  What is this variable?  What are the units?
+
+b.  (4 points)  Create two density plots of the `citric.acid` variable.  In the first, use a small bandwidth, so that many local features of the distribution are shown, and the density estimate is somewhat "jagged" / "rigid" / not smooth.  In the second, use a larger bandwidth, so that the local features of the distribution are smoothed out.  Use `grid.arrange()` to arrange these plots into a 2x1 grid.  Compare and contrast the two plots.  Discuss which features are easier or more difficult to see in each of the plots.
+
+c.  (4 points)  Create two histograms of the `citric.acid` variable.  In the first, use a small bin width (or a large number of bins), so that many local features of the distribution are shown, and the histogram is somewhat "jagged" / "rigid" / not smooth.  In the second, use a larger bin width (or a small number of bins), so that the local features of the distribution are smoothed out.  Use `grid.arrange()` to arrange these plots into a 2x1 grid.  Compare and contrast the two plots.  Discuss which features are easier or more difficult to see in each of the plots.
+
+d.  (6 points)  Does the distribution of `citric.acid` differ depending on the quality (`quality`) of the wine?  Answer this graphically in three ways:  First, with a "stacked histogram" (fill the bars according to the wine quality).  Second, with a "conditional density plot" (have six density curves -- one for each wine quality grade -- on a single plot, with each curve colored according to the wine quality).  Third, by creating facetted histograms of `citric.acid`, facetting on `quality`.
+
+Note:  Part (d) is an example of the type of question you might see on a lab example.
+
+e.  (2 points)  In part (d), does it make more sense to display the facetted histograms in a 1x6 (one row, six columns) grid or a 6x1 (six rows, one column) grid?  What are the advantages and disadvantages of each approach?  Which features of the histograms are easier or more difficult to compare depending on what you chose?
+
+Aside:  Note that the wine quality is an ordered categorical variable.  As such, it would be nice if you used an appropriate color gradient.  Before you proceed ensure that the variable `quality` is treated as a factor variable by running `wine <- wine %>% mutate(quality = factor(quality))`.
+
+To manually assign the colors to each category, use `my_colors <- c("darkred", "pink", "lightgrey", "lightblue",  "darkblue",  "black")`.  Then use `+ scale_fill_manual(values = my_colors)` or `+ scale_color_manual(values = my_colors)`.  
+
+A better way to automatically build the color gradient, so that it will work with any number of categories, is to use the following code.
+
+```{r, warning = F, message = F}
+color1 <- "green"
+color2 <- "red"
+palette <- c(color1, "grey", color2)
+n_values <- length(unique(wine$quality))
+
+ggplot(wine, aes(x = citric.acid, fill = quality)) + geom_histogram() + 
+  scale_fill_manual(name = "Wine Quality",
+                  values = colorRampPalette(palette)(n_values))
+```
+
+That said, you should always avoid using red and green in the same plot, since red-green colorblind viewers will not be able to distinguish the colors. 
+
+f.  (3 points)  Recreate the first plot from part (d), but use your own color gradient.  You can use an adjusted version of the above code to do this.  (Please do not include the example graph in your final submission.)  You are also welcome to change the middle color (currently "grey") to something else (e.g. "white"), or remove the middle color entirely.
+
+
+***
+***
+
+
+
+#  Problem 4
+
+(25 points)
+
+a.  (2 points)  What information is contained in the `sulphates` variable?
+
+b.  (3 points)  Is the quality of the wine associated with the amount of sulphates?  To answer this, visualize the distribution of `quality` given the `sulphates` variable with a stacked histogram.  Describe the distribution.  Be sure to mention center, spread, skew, and modality. 
+
+Note:  Part (b) is an example of the type of question you might see on a lab exam.
+
+c.  (5 points)  Visualize the log-transformed `sulphates` variable (in `R`, the `log()` function gives the natural log by default).  To do this, use `ggplot(wine) + geom_histogram(aes(x = log(sulphates),...))`, and be sure to add appropriate titles and axis labels (in particular, what are the units on the x-axis?) and use a larger-than-default number of bins.  Is it the answer to question in (b) with this graph more apparent?  Do higher-quality wines tend to have higher sulphates overall?
+
+d.  (5 points)  Repeat part (c), but with a conditional density estimate plot instead of a stacked histogram.  Use the `adjust` parameter to reduce the bandwidth to 75% of the default value. **Make sure you graphic does the best it can to actually help the viewer answer the question.**
+
+e.  (10 points)  Examine the plots from the following lines of code.  Why does the rug plot show up in some plots, but not in others?  Why do the middle-column plots look different from the others?  Which line of code is most efficient and appropriate to use, given how `ggplot()` uses the `aes()` function?
+
+```{r, fig.width = 12, fig.height = 8, warning = FALSE, message = FALSE}
+library(gridExtra)
+plot1 <- ggplot(wine) + geom_histogram(aes(x = log(sulphates))) + geom_rug()
+plot2 <- ggplot(wine) + geom_histogram(aes(x = log(sulphates))) + geom_rug(aes(x = sulphates))
+plot3 <- ggplot(wine) + geom_histogram(aes(x = log(sulphates))) + geom_rug(aes(x = log(sulphates)))
+plot4 <- ggplot(wine, aes(x = log(sulphates))) + geom_histogram() + geom_rug()
+plot5 <- ggplot(wine, aes(x = log(sulphates))) + geom_histogram() + geom_rug(aes(x = sulphates))
+plot6 <- ggplot(wine, aes(x = log(sulphates))) + geom_histogram() + geom_rug(aes(x = log(sulphates)))
+
+grid.arrange(plot1, plot2, plot3, plot4, plot5, plot6, ncol = 3)
+```
+
+f.  (BONUS:  1 point)  `ggplot()` has many scaling functions built in.  What can you add to the following line of code (where it currently says `+ ???` to put the x-axis on the square-root scale?  What about the log-base-10 scale?
+
+`ggplot(wine, aes(x = sulphates)) + geom_histogram() + geom_rug() + ???`
+
+(BONUS: 1 point) Same question as above, but this time show an $atanh$ transformation of the x-axis.
+
+
+***
+***
+
+#  Problem 5
+
+(20 points)
+
+**Automatically Specify Bin Width**
+
+Write a function called `auto_binwidth()` that automates the choice of a bin width for a 1-D histogram.  Your function should work as follows:
+
+```{r}
+auto_binwidth <- function(x, adjust = 1) {
+  #  your code should calculate a desired bin width, called "binwidth"
+  #  given features of x, the input variable
+  #  your function should return the binwidth times an adjustment factor
+  #  that is specified by the user
+  return(adjust * binwidth)
+}
+
+#ggplot(wine) + geom_histogram(aes(x = log(sulphates)),
+#                 binwidth = auto_binwidth(log(wine$sulphates)))
+```
+
+That is, it should select the bin width automatically given, as input, the variable you are plotting on the x-axis.
+
+Your function should take into account some combination of the following features:
+
++  The minimum and maximum (or the range/spread) of the variable
++  The variance (or standard deviation) of the variable
++  The skewness of the variable
++  The number of observations / sample size
++  Other important statistics (e.g. mean, median, quantiles, etc)
++  Anything else you think may help
+
+The function should output a single number, specifying the bin width to be used in the histogram (adjusted with an adjustment factor specified by the user).
+
+You may NOT use or look up existing functions/formulas for automatically specifying the bin width or number of bins in a histogram.  The purpose of this problem is to get you to think about what's important when choosing this parameter.  Blindly copying down a formula from the internet does not achieve this goal.
+
+Other than that, how you define your function is up to you.  Ideally, your bin width will adapt to different types of distributions and be dependent on the sample size.  For example, if you only have 20 observations, you probably don't want a histogram with 30 bins!
+
+Demonstrate that your function works on:
+
++  One continuous variable from the `wine` dataset
++  One continuous variable from the `food` dataset (from Lab 05)
++  A random sample of size 100 from a Normal(mean = 0, sd = 1) distribution (use `rnorm()`)
++  A random sample of size 10000 from a Normal(mean = 0, sd = 100) distribution (use `rnorm()`)
+
+
+***
+***
+
+
+#  Practice Exam Problems:  6 & 7
+
+***Instructions:  Practice Lab Exam***
+
++  Problems 6 and 7 are practice lab exam problems.
++  You should expect to see more questions like this (open-ended) on both the lab exam and for the remainder of the semester.
++  For these practice exam questions, be sure to answer the question(s) asked.
++  In addition to answering the questions asked, **write 1-3 sentences describing why you made certain choices in your graphic.**  For example, why did you choose a histogram vs. density plot?  Pie chart vs. rose diagram vs. bar chart vs. spine chart?  Stacked vs. side-by-side vs. proportional bar chart vs. mosaic plot?  Why did you choose the bin width / number of bins in your histogram?  Why did you choose the bandwidth and kernel that you picked in your density plot?  Why did you decide to arrange the graphs the way you did (e.g. in a grid, horizontally, vertically).  Etc.
++  Remember, whenever you can supplement your answer with information from a statistical test, this is very beneficial!  Feel free to run statistical tests and include this information as part of your answer.
++  If specified how many graphics you are permitted to use you should stick to the following rules: if you're using `facet_wrap()` or `facet_grid()`, this counts as a single graphic.  If you're using `grid.arrange()`, this counts as multiple graphics.
+
+
+***
+***
+
+## Problem 6
+
+Load the IMDB movie data from the course GitHub page at the following
+link:
+(https://raw.githubusercontent.com/mateyneykov/315_code_data/master/data/imdb_test.csv). **NOTE:
+This is NOT Matey's movies ratings data set.** The data is taken from
+Kaggle.  This is a heavily altered version of the original data.
+
+(20 points)
+
+**All About Content**
+
+a.  (4 points)  Characterize and vizualize the distribution of the `content_rating` of IMDB movies.  Describe any interesting features you see. Use at most one graphic for this problem.
+
+b.  (4 points)  Compare the conditional distributions of whether or not a movie was a comedy given the `content_rating` of the movie.  Describe any interesting features you see. Use following code below - it may be helpful to examine how the `grepl` function works.
+
+```{r}
+# # your data name might be different
+# imdb <- imdb  %>% mutate(comedy = grepl("Comedy", genres))
+```
+
+
+c.  (4 points)  Which category of `content_rating` has the highest proportion of comedies?  Provide visual or statistical evidence, and explain how the evidence leads you to your answer.
+
+d.  (4 points)  Is the `content_rating` of IMDB movies independent of whether or not the movie is a comedy?  Provide visual or statistical evidence, and explain how the evidence leads you to your answer. 
+
+e.  (4 points)  Write 1-3 sentences, total, describing why you made certain choices in your graphics for parts c and d.
+
+f.  (BONUS:  4 points)  Your friend tells you that 4% of all movies are rated G, 15% are PG, 30% are PG-13, 43% are R, 0.5% are NC-17, and 7.5% of are N/A or Unrated.  Is there evidence to reject your friend's claim?  Provide visual or statistical evidence, and explain how this evidence leads you to your answer.
+
+##  Problem 7
+
+This problem also uses the IMDb data from Problem 6.
+
+(10 points)
+
+**Facebook Likes vs Year of Release**
+
++ Characterize the distribution of the log(total facebook likes of a movie on facebook). 
++ Create the variable `last_decade` which equals to "2010+" if year the movie was made was 2010 or later, "<2010" if it was made before 2010, and `NA` is the dataset doesn't know the title year.  What type of movies are more popular within each mode of the distribution of log(total facebook likes of a movie on facebook) -- those made after 2010 or those made before 2010?
+
+Use no more than one graphic to answer both questions above.
+
+**Make sure to also write 1-3 sentences describing why you made certain choices in your graphic.**
+
