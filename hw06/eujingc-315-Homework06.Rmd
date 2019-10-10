@@ -1,0 +1,208 @@
+---
+title: "36-315 Homework 06, Fall 2019"
+author: "Eu Jing Chua"
+date: "Due Wednesday, Oct 9, 2019"
+output: 
+  html_document:
+    toc:  true
+    toc_float:  true
+    code_folding:  show
+---
+
+
+## Lab Exam Practice
+
+Using the tidyverse style guide
+
+```{r}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+```
+
+
+
+## Problem 1
+
+```{r}
+library(tidyverse)
+
+runs <- read_csv("https://raw.githubusercontent.com/mateyneykov/315_code_data/master/data/runs.csv")
+races <- read_csv("https://raw.githubusercontent.com/mateyneykov/315_code_data/master/data/races.csv")
+```
+
+```{r}
+ggplot(races, aes(x = race_class, fill = going)) +
+    geom_bar() +
+    facet_wrap(~ venue) +
+    labs(x = "Race Class", y = "Count", fill = "Track Condition",
+         title = "Distribution of Track Condition by Race Classes and Venue")
+```
+
+(a) The marginal distribution of race classes is roughly unimodal, centered around 4 with a right skew.  
+
+(b) We can see that for all of the race classes, the distribution of the track condition given the race class is mostly dominated by good conditions, followed by good to firm.
+
+
+(c) Between Happy Valley and Shantin, there is not much difference in distributions, except for how there are lower counts in Happy Valley in general but with the same distribution shapes. However, there are very little to no fast track conditions given any of the race classes in Happy Valley.
+
+
+(d) I used a bar plot as race class is a discrete variable and I would like to show the frequency of each class.  
+As for conditional distributions, I choose a stacked bar chart as there are many race classes and facetting on race classes would result in sparse looking individual conditional distributions.  
+However, I facetted on venue as there are only two venues and both facets are informative and easy to compare side-by-side.
+
+
+## Problem 2
+
+```{r}
+ggplot(races, aes(x = log(prize), fill = factor(race_class))) +
+    geom_histogram(bins = 20, position = "identity", alpha = 0.7) +
+    facet_wrap(~ venue) +
+    labs(x = "log(Prize (HK Dollars))", y = "Count", fill = "Race Class",
+         title = "Distribution of log(Prize (HK Dollars)) by Race Class and Venue")
+```
+
+
+(a) The distribution of log of prize is unimodal and heavily skewed to the right. It has its mode around 13.5 on the log scale of HK dollars.
+
+(b) The conditional distributions of log prize money on each race class varies by where they are roughly centered around, with higher numbered race classes seemingly having more prize money than the lower numbered ones.  
+I would naively order them decreasingly as 11, 12, 13, 0, 1, 2, 3, 4, 6, 5
+
+(c) The prize distribution gets slightly more right skewed in Shantin in comparison to Happy Valley but both are still unimodal with around the same mode. Shantin gives out higher prizes for the high numbered race classes (i.e. 11, 12, 13), but there are much less of these race classes in Happy Valley.
+
+(d) I used a histogram with 20 bins to balance out displaying the features of the continuous variable log dollars and the overall shape of the distribution.  
+I used overlapping histograms as this allows us to easily compare the conditional distributions if one distribution tends to have higher values than another.  
+Finally, I used facetting to display the overlapping histograms by venue so both marginals and conditionals can be compared within both locations easily side-by-side.
+
+## Problem 3
+
+
+```{r}
+ggplot(runs, aes(x = finish_time)) +
+    geom_histogram(bins = 10, fill = "lightblue", color = "black") +
+    labs(x = "Finishing Time (sec)", y = "Count",
+         title = "Distribution of Finishing Times (sec)")
+
+races_runs <- left_join(runs, races, by = c("race_id" = "race_id"))
+
+ggplot(races_runs, aes(x = finish_time, fill = factor(distance))) +
+    geom_density(adjust = 5) +
+    labs(x = "Finishing Time (sec)", y = "Density", fill = "Distance (m)",
+         title = "Distributions of Finishing Times (secs) given Distance (m)")
+```
+
+(a) The distribution of finishing times is roughly bimodal, with one mode around 75 secs and another around 100 secs. There is some right skew.
+
+(b) (In code)
+
+(c) We can see now that there is actually very narrow distributions around the finishing time for each distance, which we were not able to see in part a) due to the nature of histograms.  
+Now, each conditional distribution is very centered around different means, with long distance races having later mean finishing times in general.
+
+(d) I used a histogram with a low number of bins to visualize the marginal distribution of finishing times as there were many gaps in it.  
+However, the second plot of side-by-side conditional density plots made it easier to see that there are indeed many modes in the marginal distribution as each conditional distribution is quite significantly different.
+
+
+## Problem 4
+
+
+```{r}
+races_1200 <- races %>% filter(distance == 1200)
+
+ggplot(races_1200, aes(x = time1, y = time2, color = factor(surface))) +
+    geom_point() +
+    facet_wrap(~ venue) +
+    labs(x = "Time to finish 1st section (sec)",
+         y = "Time to finish 2nd section (sec)",
+         color = "Is Dirt?",
+         title = "Time to Finish 1st Section (sec) Against Time for 2nd Section (sec) by Venue")
+```
+
+
+(a) In general the time taken to finish the 1st section is generally smaller than the time taken for the 2nd section. There is a positive correlation between the former and latter time.
+
+(b) In general turf is slower than dirt, as seen by the higher values in both sections from the plot.
+
+(c) In general Shantin exhibits faster times than Happy Valley as it has more races on dirt, whereas Happy Valley does not have many, and we know races on dirt tend to be faster.
+
+(d) I used a scatter plot as we would like to visualize the relationship between two continuous variables, times.  
+I color the points by the surface type to see if there is any clustering, and use facetting to show the scatters grouped by venue so we can compare the scatters between venues.
+
+## Problem 5
+
+
+```{r}
+library(lubridate)
+races_cond <- races %>%
+    filter(going %in% c("GOOD", "GOOD TO YIELDING", "GOOD TO FIRM")) %>%
+    mutate(month = month(as.POSIXlt(date)))
+
+ggplot(races_cond, aes(x = factor(month), fill = factor(going))) +
+    geom_bar() +
+    facet_wrap(~ surface) +
+    labs(x = "Month", y = "Count", fill = "Is Dirt?",
+         title = "Distribution of Races over Months by Surface and Condition")
+```
+
+
+(a) There is a sudden dip in races in April, but the number of races increases towards the end of the year then decreaeses again.
+
+(b) There is roughly a small and similar number of dirt-surface races each month except during April and May where there is a dip.
+
+(c) The track condition changes throughout the months, as we can see there is a large number of "GOOD" conditions towards the end of the year, but around March to June there we get a higher proportion of "GOOD TO FIRM" conditions. We can also see that track conditions are surface specific, as there are no "GOOD TO FIRM" and "GOOD TO YIELDING" conditions on dirt surfaces.
+
+(d) I chose to do barplots to show the distribution of number of races across discrete months.  
+For the conditional distribution of condition given month, I used stacked bar plots so that we can compare the change in proportions across time more easily when they are side-to-side.  
+I also used facetting to group the plots by surface so we can see how the conditions are surface specific.
+
+
+## Problem 6
+
+```{r}
+races_runs <- left_join(runs, races, by = c("race_id" = "race_id"))
+races_runs_long_d <- races_runs %>%
+    filter(distance %in% c(2000, 2200, 2400)) %>%
+    mutate(odds_type = cut(win_odds, c(0, 20, 70, Inf), labels = c(1, 2, 3)))
+
+ggplot(races_runs_long_d, aes(x = finish_time, fill = odds_type)) +
+    geom_density(alpha = 0.7) +
+    facet_wrap(~ distance) +
+    labs(x = "Finish Times (sec)", y = "Density",
+         fill = "Odds Type",
+         title = "Distributions of Finishing Times (sec) by Odds Type and Distance (m)")
+```
+
+
+(a) (In code)
+(b) We can see from the graph that across all 3 distances, the finishing time distributions for each odds type are all roughly centered around the same time with the similar spread, thus we conclude finishing time is not significantly faster for any particular odds type.
+
+(c)  I chose to use a density plot to visualize the distribution of finishing times which is continuous.  
+I also separated the density plots by odds type so we can compare the distributions side by side.  
+Facetting was used to group the data by distances so we can make our comparisons within the same distance only.
+
+
+## Problem 7
+
+```{r}
+my_runs_races <- races_runs %>%
+    mutate(speed = distance / finish_time) %>%
+    filter(distance %in% c(2000, 2200))
+
+ggplot(my_runs_races,
+       aes(x = horse_rating, y = speed, color = factor(distance))) +
+    geom_point(alpha = 0.5) +
+    geom_smooth(data = subset(my_runs_races, distance == 2000),
+                method = "lm", se = FALSE) +
+    geom_smooth(data = subset(my_runs_races, distance == 2200),
+                method = "lm", se = FALSE) +
+    labs(x = "Horse Rating", y = "Speed (m/s)", color = "Distance",
+         title = "Speed (m/s) against Horse Ratings")
+```
+
+
+(a) (In code)
+
+(b) There is a positive correlation between the horse rating and average speed.
+
+(c) I would not use the same linear model, as there seems to be a rough constant offset in average speeds between the two distance races as shown above.
+
+(d) I used a scatter plot to visualize the relationship between the two continuous variables, horse rating and speed.  
+I added alpha to the points themselves so that we can see the linear trends more clearly. Also, I colored the points by their distances so that we can see the clustering of points based on the distance.
+
