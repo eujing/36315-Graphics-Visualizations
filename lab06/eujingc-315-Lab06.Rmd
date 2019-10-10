@@ -1,0 +1,270 @@
+---
+title: "36-315 Lab 06"
+author: "Eu Jing Chua"
+date: "Due Friday, Oct 4, 2019 (6:30pm)"
+output: 
+  html_document:
+    toc:  true
+    toc_float:  true
+    code_folding:  show
+---
+
+
+##  Lab 06:  Trends, Transformations, and Correlations in 2-D Continuous Data
+***
+***
+
+Using the tidyverse style guide.
+
+#  Problem 1
+
+a.  
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(gridExtra)
+
+food <- read_csv("https://raw.githubusercontent.com/mateyneykov/315_code_data/master/data/food-facts.csv")
+```
+
+Continuous variables, lower bound, upper bound:  
+- quantity, 0, none  
+- energy_100g, 0, none  
+- fat_100g, 0, 100  
+- saturated_fat_100g, 0, 100  
+- carbohydrates_100g, 0, 100  
+- sugars_100g, 0, 100  
+- fiber_100g, 0, 100  
+- proteins_100g, 0, 100  
+- salt_100g, 0, 100  
+- sodium_100g, 0, 100  
+
+There are observed as well as natural bounds, such as for fiber even though the observed maximum is 43, the theoretical maximum is 100.
+
+
+b.  
+```{r message=FALSE, warning=FALSE}
+eujingc_315_theme <- theme(axis.text = element_text(size = 12),
+        plot.title = element_text(size = 14, face = "bold", hjust = 0),
+        text = element_text(size = 14, face = "bold", color = "darkslategrey"))
+```
+
+
+
+***
+***
+
+
+#  Problem 2
+
+a.  
+
+```{r warning=F, message=F}
+ggplot(food, aes(x = proteins_100g)) +
+    geom_density() +
+    geom_histogram(aes(y = ..density..),
+                   fill = "grey", color = "black", alpha=0.7) +
+    facet_wrap(~ additives_n) +
+    labs(x = "Protein (per 100g)", y = "Density",
+         title = "Distribution of Protein per 100g by Presence of Additives") +
+    eujingc_315_theme
+```
+The distribution is skewed right regardless of the presence of additives.
+
+
+b.  
+```{r message=F, warning=F}
+g1 <- ggplot(food, aes(x = log(proteins_100g))) +
+    geom_density() +
+    geom_histogram(aes(y = ..density..),
+                   fill = "grey", color = "black", alpha=0.7) +
+    facet_wrap(~ additives_n) +
+    labs(x = "log(Protein (per 100g))", y = "Density",
+         title = "Distribution of log(Protein per 100g) by Presence of Additives") +
+    eujingc_315_theme
+g2 <- ggplot(food, aes(x = sqrt(proteins_100g))) +
+    geom_density() +
+    geom_histogram(aes(y = ..density..),
+                   fill = "grey", color = "black", alpha=0.7) +
+    facet_wrap(~ additives_n) +
+    labs(x = "sqrt(Protein (per 100g))", y = "Density",
+         title = "Distribution of sqrt(Protein per 100g) by Presence of Additives") +
+    eujingc_315_theme
+grid.arrange(g1, g2, nrow = 2)
+```
+
+
+c.  136 items have 0 grams of protein.
+
+d.  $\sqrt(0) = 0$
+
+e.  $\log(0) = -\infty$
+
+f.  It removes the invalid values.
+
+g.  
+```{r message=F, warning=F}
+g1 <- ggplot(food, aes(x = log(proteins_100g + 1))) +
+    geom_density() +
+    geom_histogram(aes(y = ..density..),
+                   fill = "grey", color = "black", alpha=0.7) +
+    facet_wrap(~ additives_n) +
+    labs(x = "log(Protein (per 100g))", y = "Density",
+         title = "Distribution of log(Protein per 100g) by Presence of Additives (epsilon = 1)") +
+    eujingc_315_theme
+g2 <- ggplot(food, aes(x = log(proteins_100g + 0.01))) +
+    geom_density() +
+    geom_histogram(aes(y = ..density..),
+                   fill = "grey", color = "black", alpha=0.7) +
+    facet_wrap(~ additives_n) +
+    labs(x = "log(Protein (per 100g))", y = "Density",
+         title = "Distribution of log(Protein per 100g) by Presence of Additives (epsilon = 0.01)") +
+    eujingc_315_theme
+grid.arrange(g1, g2, nrow = 2)
+```
+
+With a smaller epsilon, we create a much larger gap between the transform of rows with 0g of protein and the rest of the density.
+
+
+***
+***
+
+
+#  Problem 3
+
+a.  
+```{r}
+ggplot(food, aes(x = fat_100g, y = energy_100g)) +
+    geom_point() +
+    labs(x = "Fat per 100g", y = "Energy per 100g",
+         title = "Plot of Energy per 100g against Fat per 100g") +
+    eujingc_315_theme
+```
+
+
+b.  Energy seems to have a positive correlation with fat across the spectrum. There is some grouping structure, with an elongated group of points above another elongated group of points.
+
+
+c.  
+```{r}
+ggplot(food, aes(x = fat_100g, y = energy_100g, color = pnns_groups_1)) +
+    geom_point() +
+    labs(x = "Fat per 100g", y = "Energy per 100g", color = "Food Type",
+         title = "Plot of Energy per 100g against Fat per 100g") +
+    eujingc_315_theme
+```
+
+We can see that for example beverages and salty snacks are clustered together having higher energy in general given its fat content, and fruits and vegetables have lower energy in general given its fat content.
+
+d.  
+```{r}
+ggplot(food, aes(x = fat_100g, y = energy_100g, color = pnns_groups_1)) +
+    geom_point() +
+    facet_wrap(~pnns_groups_1) +
+    labs(x = "Fat per 100g", y = "Energy per 100g", color = "Food Type",
+         title = "Plot of Energy per 100g against Fat per 100g") +
+    eujingc_315_theme
+```
+
+The facetting makes it easier to see groups. This may not be true in general as it oculd depend on the nature of the data being visualized.
+
+
+e.  
+```{r}
+ggplot(food, aes(x = fat_100g, y = energy_100g, shape = additives_n)) +
+    geom_point() +
+    labs(x = "Fat per 100g", y = "Energy per 100g", shape = "Has Additives",
+         title = "Plot of Energy per 100g against Fat per 100g") +
+    eujingc_315_theme
+```
+
+It is hard to tell as the points are too close and too small.
+
+
+f.  
+```{r}
+ggplot(food, aes(x = fat_100g, y = energy_100g, size = sodium_100g)) +
+    geom_point() +
+    labs(x = "Fat per 100g", y = "Energy per 100g", size = "Sodium per 100g",
+         title = "Plot of Energy per 100g against Fat per 100g") +
+    eujingc_315_theme
+```
+
+There appears to only be a small negative correlation in the sodium content with the fat content.
+
+
+g.  
+```{r}
+ggplot(food, aes(x = fat_100g, y = energy_100g)) +
+    geom_point() +
+    geom_smooth(method="lm", se = FALSE) +
+    labs(x = "Fat per 100g", y = "Energy per 100g",
+         title = "Plot of Energy per 100g against Fat per 100g") +
+    eujingc_315_theme
+```
+
+The line is not really a good fit as it overestimates the energy for higher fat content food.
+
+
+h.  
+```{r, message=F, warning=F}
+ggplot(food, aes(x = fat_100g, y = energy_100g)) +
+    geom_point() +
+    geom_smooth(method="auto", se = FALSE) +
+    labs(x = "Fat per 100g", y = "Energy per 100g",
+         title = "Plot of Energy per 100g against Fat per 100g") +
+    eujingc_315_theme
+```
+
+It appears to provide a better fit to the data as it does not consistently over or under predict as much as before as it has more degrees of freedom. However, it still does not predict the energy level of the maximal fat content foods well.
+
+i.  
+```{r, message=F, warning=F}
+ggplot(food, aes(x = fat_100g, y = energy_100g)) +
+    geom_point(aes(color = pnns_groups_1)) +
+    geom_smooth(method="auto", se = FALSE) +
+    labs(x = "Fat per 100g", y = "Energy per 100g", color = "Food Type",
+         title = "Plot of Energy per 100g against Fat per 100g") +
+    eujingc_315_theme
+```
+
+j.  
+```{r, message=F, warning=F}
+ggplot(food, aes(x = fat_100g, y = energy_100g, color = pnns_groups_1)) +
+    geom_point() +
+    geom_smooth(method="auto", se = FALSE) +
+    labs(x = "Fat per 100g", y = "Energy per 100g", color = "Food Type",
+         title = "Plot of Energy per 100g against Fat per 100g") +
+    eujingc_315_theme
+```
+
+k.  In the first, we map the food type to color aesthetic specifically to that of points only, so there is still only 1 trend line through the data. In the second we do the mapping at the data level, so there is an extra dimension of grouping by food type then doing a regression for each group.
+
+***
+***
+
+#  Problem 4
+
+(5 points each)
+
+**Correlations**
+
+a.  
+```{r}
+with(food, cor(fat_100g, energy_100g))
+```
+
+
+b.  
+```{r}
+food %>% 
+  select(fat_100g, energy_100g, sugars_100g, proteins_100g) %>%
+  cor
+````
+
+The code selects a subset of the columns in the data and then generates a correlation matrix for them.  
+Energy and fat have the strongest positive correlation, while protein and sugar have the strongest negative correlation.  
+
+
+***
+***
