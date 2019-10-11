@@ -21,44 +21,10 @@ knitr::opts_chunk$set(message = FALSE, warning = FALSE)
 library(tidyverse)
 ```
 
-<!--
-
-# Oral Evaluation Graphic
-
-This week's oral evaluation graphic is from Reuters Graphics:
-
-<div style="width:900px">
-![](https://raw.githubusercontent.com/mateyneykov/315_code_data/master/images/reuters_nuclear_explosions.png)
-</div>
-
-
-**Matey Says**:  It's important to avoid inserting your own commentary when discussing graphics  Your job, as a statistician / data scientist / quantitative analyst, is to interpret the graph for the viewer.  Discuss the facts presented via the data/graphic; avoid overstepping your boundaries by inserting your own opinions into what should be a presentation of facts.
-
-***
-***
--->
-
-# Load the Data
-
-Load the Italian olive oils dataset into R from the following location on the course GitHub page, and store it in a `data.frame` called `olive`: [https://raw.githubusercontent.com/mateyneykov/315_code_data/master/data/olive_oil.csv]
-
-Brief data description:  
-
-+  Groups:  Two choices -- three macro-`area`s and nine specific `region`s in Italy
-+  Covariates:  Eight variables (chemical measurements on acid components of oil)
-
-[For more information on the data, see here.](https://raw.githubusercontent.com/mateyneykov/315_code_data/master/data/olive_desription.txt)
-
-**Note:  The units are on the variables in this dataset are a little confusing, so don't worry about including units on your graphs this week.  **
-
-<div style="width:350px">
-![](https://raw.githubusercontent.com/mateyneykov/315_code_data/master/images/italy.png)
-</div>
 
 ```{r}
 olive <- read_csv("https://raw.githubusercontent.com/mateyneykov/315_code_data/master/data/olive_oil.csv")
 ```
-
 
 ***
 ***
@@ -71,7 +37,7 @@ Using the tidyverse style guide.
 ```{r}
 eujingc_315_theme <-  theme_bw() +
   theme(axis.text = element_text(size = 12),
-        plot.title = element_text(size = 22, face = "bold", hjust = 0),
+        plot.title = element_text(size = 20, face = "bold", hjust = 0),
         plot.subtitle = element_text(size = 14, face = "italic", hjust = 0),
         text = element_text(size = 14, face = "bold", color = "darkslategrey"))
 ```
@@ -90,7 +56,8 @@ b.
 ```{r}
 olive_sub <- olive_sub %>% mutate(
     area = recode(olive_sub$area, "South", "Sardinia", "North"),
-    region = recode(olive_sub$region, "North Apulia", "South Apulia", "Calabria",
+    region = recode(olive_sub$region,
+                    "North Apulia", "South Apulia", "Calabria",
                     "Sicily", "Umbria", "East Liguria", "West Liguria",
                     "Inland Sardinia", "Coastal Sardinia"))
 ```
@@ -98,7 +65,7 @@ olive_sub <- olive_sub %>% mutate(
 
 
 c.  
-```{r}
+```{r cache = TRUE}
 library(GGally)
 
 ggpairs(olive_sub, aes(color = area))
@@ -110,9 +77,8 @@ There also seems to be a positive correlation between palmitic abd palmitoleic.
 d.  
 ```{r}
 ggplot(olive_sub,
-       aes(x = stearic, y = palmitic,
-           color = region, shape = area)) +
-    geom_point() +
+       aes(x = stearic, y = palmitic)) +
+    geom_point(aes(color = region, shape = area)) +
     labs(x = "Stearic", y = "Palmitic",
          color = "Region", shape = "Area",
          title = "Palmitic against Stearic") +
@@ -130,17 +96,36 @@ e.  We can see that the Calabria region and South area tend to be grouped togeth
 
 # Problem 2
 
-(10 points each)
 
-**Density Estimates and Heat Maps**
+a.  
+```{r}
+ggplot(olive_sub, aes(x = stearic, y = palmitic)) +
+    geom_point(aes(color = region, shape = area)) +
+    geom_density_2d() +
+    labs(x = "Stearic", y = "Palmitic",
+         color = "Region", shape = "Area",
+         title = "Distribution of Palmitic and Stearic") +
+    eujingc_315_theme
+```
 
 
+b.  There are several distinct groups, most notably Calabria and Umbria being tight distinct groups in terms of palmitic and stearic.
 
-a.  Recreate your graph from part (d) of Problem 1, but this time, overlay a 2-D density estimate of the overall joint distribution of the  two continuous variables in the form of a contour plot.  
+c.  
 
-b.  From your graph in (a), are there any modes / groups apparent in the data?  Do the groups correspond to any of the areas or regions?
+```{r}
+ggplot(olive_sub,
+       aes(x = stearic, y = palmitic)) +
+    geom_bin2d() +
+    scale_fill_gradient(low = "yellow", high = "red") +
+    geom_point(aes(color = region, shape = area)) +
+    guides(col = guide_legend(ncol = 2)) +
+    labs(x = "Stearic", y = "Palmitic", fill = "Count",
+         color = "Region", shape = "Area",
+         title = "Distribution of Palmitic and Stearic") +
+    eujingc_315_theme
+```
 
-c.  Create a heat map of the two variables you used in your scatterplot from Problem 1, part (d).  Use a non-default color scheme in your heatmap.
 
 
 
@@ -150,32 +135,47 @@ c.  Create a heat map of the two variables you used in your scatterplot from Pro
 
 # Problem 3
 
-**Around the World**
-
 ```{r message = F, warning = F}
 gm <- read_csv("https://raw.githubusercontent.com/mateyneykov/315_code_data/master/data/gapminder.csv")
 gm_sub <- gm %>% filter(year > 2000) #data we would actually use.
 ```
 
-This dataset contains information about life expectancy, population and GDP per capital collected in 2002 and 2007 for countries around the world. We're going to use it to explore the relationships between gdp and life expectancy across continents.
 
-a. (5 points) Create a scatter plot between the log10 transform of GDP per capita and life expectancy, coloring on `continent`.
-
-b. (5 points) What patterns can you see? **Describe the relationship and joint distribution between `lifeExp` and `log10(gdpPercap)` overall and conditional on continent.** (Kinda expecting $> 3$ sentences.)
-
-c. (5 points) Try fitting a linear regression `geom_smooth(method = "lm") and a non-parametric regression relating the log10 transform of GDP per capita and life expectancy (we only want 1 line per regression).  Which do you prefer for this data set and why (which makes more sense/ fit the data better)? 
-
-d. (5 points) How should we interpret the regression lines' confidence? In earlier statistics classes you saw confidence intervals for a mean value $\mu$ and linear regression coefficents $\beta$. Similar to these confidence intervals, confidence bands provide regions that, under assumptions of models, we'd expect to be able to capture the true regression curve in the confidence band $1 - \alpha$ proportion of the time we drew samples from data with the regression as the truth. Additionally recall that the regression function is just a function that defined the mean value of $Y$ given $X$.
-
-Nice interpretive properties:
-
-+ if a confidence band (especially from a regression function) can include a flat line (with $slope = 0$) then we cannot reject the idea (hypothesis) that there is no relationship (or at least linear relationship if a linear regression) between $X$ and $Y$.
-
-+ if two confidence bands overlap for their entirety of the range of $X$, then we cannot reject that both groups have the same regression function.
+a. 
+```{r}
+ggplot(gm_sub) +
+    geom_point(aes(x = gdpPercap, y = lifeExp, color = continent)) +
+    scale_x_log10() +
+    labs(x = "log10(GDP (per capita))", y = "Life Expectancy (years)",
+         color = "Continent",
+         title = "Distribution of log10(GDP) and Life Expectancy") +
+    eujingc_315_theme
+```
 
 
+b. Overall, we see a rough positive correlation between the log10 GDP per capita and life expectancy. As the log10 GDP per capita increases, we see an increase in life expectancy. This also holds true conditional on most of the continents, except Africa by looking within each color cluster. We can also see that some clusters tend to have higher life expectancy in general, like Asia and Europe in comparison to Africa.
 
-e. (Bonus: 5 points) Looking at the code below, what does `level = .98` do in the geom_smooth (leave this at `.95` unless you have a legitimate reason not too)? Using the statements in (d): Is there a statistically significant linear relationship between `log10(gdpPercap)` and `lifeExp` for countries in the the continent of Asia? Can you conclude that the linear relationship between `log10(gdpPercap)` and `lifeExp` for countries in Asia is different that for countries in Europe? 
+c. 
+```{r}
+ggplot(gm_sub, aes(x = log10(gdpPercap), y = lifeExp)) +
+    geom_point(aes(color = continent)) +
+    geom_smooth(method = "lm", color = "red") +
+    geom_smooth(color = "blue") +
+    labs(x = "log10(GDP (per capita))", y = "Life Expectancy (years)",
+         color = "Continent",
+         title = "Distribution of log10(GDP) and Life Expectancy") +
+    eujingc_315_theme
+```
+
+I prefer the linear regression as it is simpler and fits the data well. The non-parametric regression seems approximately linear too, so I would prefer the simpler model to prevent overfitting.
+
+d. First of all, we can see that both confidence bands do not include the trivial slope of 0, so we can conclude that we reject the hypothesis that there is no linear or non-parametric relationship.  
+Secondly, the two confidence bands overlap across all log10 GDP per capita, so we fail to reject the hypothesis that both the linear regression and non-parametric regression is the same.
+
+
+e. The level parameter sets the level of confidence for which we want the confidence band.  
+There is a statistically significant linear relationship for countries in Asia, as the 98% confidence band does not contain the slope of 0.  
+We can also conclude that the linear relationships between Asia and Europe fail to be significantly different as their confidence bands overlap across all common regions.
 
 ```{r}
 ggplot(gm_sub %>% filter(continent %in% c("Asia", "Europe")), 
