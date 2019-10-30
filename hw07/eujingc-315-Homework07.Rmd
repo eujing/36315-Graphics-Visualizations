@@ -194,17 +194,39 @@ a.  (1 point)  Create a subset of only the continuous variables (no `area` or `r
 olive <- read_csv("https://raw.githubusercontent.com/mateyneykov/315_code_data/master/data/olive_oil.csv")
 olive_cont <- olive %>% select(-c(area, region))
 olive_cont_scale <- olive_cont %>% mutate_each(scale)
+dist_olive <- dist(olive_cont_scale)
 ```
 
 
 b.  (2 points)  Submit your distance matrix to hierarchical clustering with the `hclust()` function.  Use complete linkage to determine when groups of observations should be linked:  `hclust(dist_olive, method = "complete")`.  Store this in an object called `hc_olive_complete`.  Type `names(hc_olive_complete)`.  What information is stored in the hierarchical clustering object?  What is `hc_olive_complete$method`?
 
+Information about the dendrogram is stored in the clustering object, such as the height of each point in the dendrogram, the distance metric used between points, the method of clustering, etc. In this case, the method used is complete linkage.
+
+```{r}
+hc_olive_complete <- hclust(dist_olive, method = "complete")
+names(hc_olive_complete)
+```
+
+
 c.  (2 points)  Plot your `hc_olive_complete` object using base R graphics:  `plot(hc_olive_complete)`.  One nice thing (or not-so-nice thing, depending on how you look at it) about base R graphics is that `plot()` will adapt to whatever kind of object it takes as input and show the corresponding plot in (what it deems to be) an appropriate way.  What kind of structure does `plot()` use to visualize hierarchical clustering results?
+
+Plot uses a tree structure to visualize the hierarchal clustering results.
+
+```{r}
+plot(hc_olive_complete,
+     xlab = "Clustering", sub = "",
+     main = "Cluster Dendrogram of Continuous Olive Properties")
+```
+
 
 d.  (2 points) 
 The resulting dendrogram specifies the distance at which groups of observations are linked in the hierarchical clustering results.  Groups linked at lower distances (lower heights on the dendrogram) are closer together / highly similar; groups linked at higher distances (higher heights on the dendrogram) are farther apart / highly dissimilar.  What, roughly, is the maximum distance at which two groups of observations are linked in this dataset?  The maximum distance at which two groups are linked represents the final link being completed in hierarchical clustering.  
 
+The maximum distance at which two groups of observations are linked in this dataset is slightly more than 10, as seen from the above dendrogram.
+
 e.  (2 points)  Dendrograms are tree-like structures.  Starting at the top of a dendrogram, if you follow the branches down to the "leaves" of the tree, you see a hierarchy of clustering results.  Each leaf in the tree represents a single observation in the dataset, so that there a total of $n$ leaves in the dendrogram (where $n$ is the number of observations in the dataset).  Roughly what proportion of the observations are in the two groups being linked at the final iteration of hierarchical clustering?  (An exact answer is not necessary here; just look at the graph and give a rough estimate of the number of leaves on the tree under each branch.)
+
+About two-thirds of the data are in one cluster and the remaining third in the other cluster when we look at the final link at the top.
 
 f.  (2 points)  With hierarchical clustering, remember:  We actually have a _hierarchy_ of clustering results.  So, how do we actually get the clustering results?   There are two approaches with hierarchical clustering.  The first approach involves selecting the number of clusters that you want, and then "cutting" the tree an an appropriate height.  All observations linked below that height are considered to be in the same cluster.  All observations linked above that height are considered to be in different clusters.  To do this in R, use the `cutree()` function ("cut tree").  Return the cluster labels corresponding to the two-cluster solution by using `cutree(hc_olive_complete, k = 2)`, and store this in an object called `labels_complete_2`.  What type of object is `labels_complete_2`?  How many elements are contained in `labels_complete_2`?
 
