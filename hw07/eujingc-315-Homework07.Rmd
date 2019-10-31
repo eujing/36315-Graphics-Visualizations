@@ -6,22 +6,12 @@ output:
   html_document:
     toc:  true
     toc_float:  true
-    code_folding:  show
+    code_folding:  hide
 ---
 
 #  Homework 07:  Higher Dimensional Continuous Data
 
 ***General instructions for all assignments***: 
-
-+  Use this file as the template for your submission.  Delete the unnecessary text (e.g. this text, the problem statements, etc).  That said, keep the nicely formatted "Problem 1", "Problem 2", "a.", "b.", etc
-+  Upload a single `R` Markdown file (named as:  [AndrewID]-315-HW07.Rmd -- e.g. "mneykov-315-HW07.Rmd") to the Homework 08 submission section on Canvas.  You do not need to upload the .html file.
-+  The instructor and TAs will run your .Rmd file on their computers.  **If your .Rmd file does not knit on our computers,
-you will get 0 points.**
-+  Your file should contain the code to answer each question in its own code block.  Your code should produce plots/output that will be automatically embedded in the output (.html) file
-+  Each answer must be supported by written statements (unless otherwise specified)
-+  Include the name of anyone you collaborated with at the top of the assignment
-+  Include the style guide you used below under Problem 0
-
 
 ***
 ***
@@ -30,39 +20,6 @@ you will get 0 points.**
 
 
 #  Problem 0
-
-**Organization, Themes, and HTML Output**
-
-(5 points)
-
-a.  For all problems in this assignment, organize your output as follows:
-
-+  Organize each part of each problem into its own tab.  For Problems 2 and 3, the organization into tabs is already completed for you, giving you a template that you can use for the subsequent problems.
-+  Use code folding for all code.  See [here](http://blog.rstudio.org/2016/03/21/rmarkdown-v0-9-5/) for how to do this.
-+  Use a floating table of contents.
-+  Suppress all warning messages in your output by using `warning = FALSE` and `message = FALSE` in every code block.
-
-
-b.  For all problems in this assignment, adhere to the following guidelines for your `ggplot` theme and use of color:
-
-+  Do not use the default `ggplot()` color scheme.
-+  For any bar chart or histogram, outline the bars (e.g. with `color = "black"`).
-+  Do not use both red and green in the same plot, since a large proportion of the population is red-green colorblind.
-+  Try to only use three colors (at most) in your themes.  In previous assignments, many students are using different colors for the axes, axis ticks, axis labels, graph titles, grid lines, background, etc.  This is unnecessary and only serves to make your graphs more difficult to read.  Use a more concise color scheme.
-+  Make sure you use a white or gray background (preferably light gray if you use gray).
-+  Make sure that titles, labels, and axes are in dark colors, so that they contrast well with the light colored background.
-+  Only use color when necessary and when it enhances your graph.  For example, if you have a univariate bar chart, there's no need to color the bars different colors, since this is redundant.
-+  In general, try to keep your themes (and written answers) professional.  Remember, you should treat these assignments as professional reports.
-
-
-c.  Treat your submission as a formal report:
-
-+  Use complete sentences when answering questions.  
-+  Answer in the context of the problem.  
-+  Treat your submission more as a formal "report", where you are providing details analyses to answer the research questions asked in the problems.
-
-
-d.  What style guide are you using for this assignment?
 
 Using the tidyverse style guide.
 
@@ -143,7 +100,7 @@ ggplot(mpg, aes(x = displ, y = cty)) +
 ```{r, warning = F, message = F}
 ggplot(mpg, aes(x = drv)) +
     geom_bar(color = "black", fill = "lightblue") +
-    geom_text(stat = "count", vjust = -1,
+    geom_text(stat = "count", vjust = -0.5,
               aes(y = ..count.., label = ..count..)) +
     labs(x = "Drive Type", y = "Count",
          title = "Distribution of Drive Types") +
@@ -182,13 +139,7 @@ ggplot(mpg, aes(x = class)) +
 
 #  Problem 3
 
-*Load the `olive` dataset from Lab 07.*
-
-**Hierarchical Clustering and Dendrograms**
-
-There are several ways to create dendrograms in R.  Regardless of which dendrogram package you use, you'll first need to create the distance matrix corresponding to your dataset, and submit that distance matrix to hierarchical clustering.
-
-a.  (1 point)  Create a subset of only the continuous variables (no `area` or `region`) from the `olive` dataset, called `olive_cont`.  Scale the dataset so that all of the variables are treated equally in the distance calculation (`olive_cont_scale`).  Now, create the distance matrix on this scaled version of the continuous variables (`dist_olive`).  
+## Part a.
 
 ```{r}
 olive <- read_csv("https://raw.githubusercontent.com/mateyneykov/315_code_data/master/data/olive_oil.csv")
@@ -197,8 +148,7 @@ olive_cont_scale <- olive_cont %>% mutate_each(scale)
 dist_olive <- dist(olive_cont_scale)
 ```
 
-
-b.  (2 points)  Submit your distance matrix to hierarchical clustering with the `hclust()` function.  Use complete linkage to determine when groups of observations should be linked:  `hclust(dist_olive, method = "complete")`.  Store this in an object called `hc_olive_complete`.  Type `names(hc_olive_complete)`.  What information is stored in the hierarchical clustering object?  What is `hc_olive_complete$method`?
+## Part b.
 
 Information about the dendrogram is stored in the clustering object, such as the height of each point in the dendrogram, the distance metric used between points, the method of clustering, etc. In this case, the method used is complete linkage.
 
@@ -208,9 +158,7 @@ names(hc_olive_complete)
 ```
 
 
-c.  (2 points)  Plot your `hc_olive_complete` object using base R graphics:  `plot(hc_olive_complete)`.  One nice thing (or not-so-nice thing, depending on how you look at it) about base R graphics is that `plot()` will adapt to whatever kind of object it takes as input and show the corresponding plot in (what it deems to be) an appropriate way.  What kind of structure does `plot()` use to visualize hierarchical clustering results?
-
-Plot uses a tree structure to visualize the hierarchal clustering results.
+## Part c.
 
 ```{r}
 plot(hc_olive_complete,
@@ -219,46 +167,48 @@ plot(hc_olive_complete,
 ```
 
 
-d.  (2 points) 
-The resulting dendrogram specifies the distance at which groups of observations are linked in the hierarchical clustering results.  Groups linked at lower distances (lower heights on the dendrogram) are closer together / highly similar; groups linked at higher distances (higher heights on the dendrogram) are farther apart / highly dissimilar.  What, roughly, is the maximum distance at which two groups of observations are linked in this dataset?  The maximum distance at which two groups are linked represents the final link being completed in hierarchical clustering.  
+## Part d.
 
 The maximum distance at which two groups of observations are linked in this dataset is slightly more than 10, as seen from the above dendrogram.
 
-e.  (2 points)  Dendrograms are tree-like structures.  Starting at the top of a dendrogram, if you follow the branches down to the "leaves" of the tree, you see a hierarchy of clustering results.  Each leaf in the tree represents a single observation in the dataset, so that there a total of $n$ leaves in the dendrogram (where $n$ is the number of observations in the dataset).  Roughly what proportion of the observations are in the two groups being linked at the final iteration of hierarchical clustering?  (An exact answer is not necessary here; just look at the graph and give a rough estimate of the number of leaves on the tree under each branch.)
+## Part e.
 
 About two-thirds of the data are in one cluster and the remaining third in the other cluster when we look at the final link at the top.
 
-f.  (2 points)  With hierarchical clustering, remember:  We actually have a _hierarchy_ of clustering results.  So, how do we actually get the clustering results?   There are two approaches with hierarchical clustering.  The first approach involves selecting the number of clusters that you want, and then "cutting" the tree an an appropriate height.  All observations linked below that height are considered to be in the same cluster.  All observations linked above that height are considered to be in different clusters.  To do this in R, use the `cutree()` function ("cut tree").  Return the cluster labels corresponding to the two-cluster solution by using `cutree(hc_olive_complete, k = 2)`, and store this in an object called `labels_complete_2`.  What type of object is `labels_complete_2`?  How many elements are contained in `labels_complete_2`?
+## Part f.
 
-g.  (2 points)  Now, let's get the exact answer from part (e).  Type `table(labels_complete_2) / nrow(olive)`.  What proportion of the observations are in the two groups being linked at the final iteration of hierarchical clustering?
+The object returned by `cutree` is a vector with each element corresponding to the cluster of the corresponding point in the original data frame. In this case, there are 572 elements in the vector returned.
 
-h.  (8 points) Okay, now let's visualize how good the clustering
-results are.  Create a new vector, called `labels_complete_3`, that
-corresponds to the three-cluster solution.  Create the 2-dimensional
-projection of `dist_olive` via multi-dimensional scaling.
-Use the R command: cmdscale.
-(Make sure you read the help file.)
-Convert the
-MDS results to a data.frame (`olive_mds`), and add the `area` and
-`region` variables **as factors** to the `olive_mds` data.frame.
-Now, add the `labels_complete_3`
-variable (**as a factor**) to the `olive_mds` data.frame as well.
-Finally, create a scatterplot with:
+```{r}
+labels_complete_2 <- cutree(hc_olive_complete, k = 2)
+```
 
-+  x = the first MDS coordinate
-+  y = the second MDS coordinate
-+  color = `area`
-+  shape = `labels_complete_3`
 
-That is, we're plotting the two MDS coordinates, coloring by the
-`area` variable, and changing the type of points so that they are
-integers corresponding to the labels from the three-cluster solution.
-If you prefer to do this with `geom_text()` instead of the `shape`
-parameter in `geom_point()`, please feel free to do so!  (It's
-actually easier that way anyways!)
+## Part g.
+The actual proportions of each cluster are 0.32 and 0.68 respectively, which is close to what we inspected visually.
 
-Do your cluster labels correspond to the `area` variable?  That is, is
-it common for points with the same color (`area`) to also have the
-point type (cluster label)?  Are there any particular `area`
-categories that are split apart in the clustering results?
+```{r}
+table(labels_complete_2) / nrow(olive)
+```
+
+
+## Part h.
+
+The cluster labels do not seem to correspond well to the area variable. We can see many areas that are split apart in terms of clustering results, such as area 3 in yellow which is split into two groups, 1 and 3. We see the same for area 1 in purple, which is split into 1 and 2 by the clustering. Only area 2 in teal is not split apart.
+
+```{r}
+labels_complete_3 <- cutree(hc_olive_complete, k = 3)
+olive_mds <- as.data.frame(cmdscale(dist_olive, k = 2))
+olive_mds$area <- factor(olive$area)
+olive_mds$region <- factor(olive$region)
+olive_mds$cluster <- factor(labels_complete_3)
+
+ggplot(olive_mds) +
+    geom_text(fontface = "bold",
+              aes(x = V1, y = V2, color = area, label = cluster)) +
+    scale_color_viridis(discrete = TRUE) +
+    labs(x = "PC1", y = "PC2", color = "Area",
+         title = "2D Projection of Distribution of Olive Prop.") +
+    eujingc_315_theme
+```
 
