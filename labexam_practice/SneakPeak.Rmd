@@ -1,0 +1,282 @@
+---
+title: "36-315 Lab Exam Early Release, Fall 2019"
+author: "Your Name Here"
+output: 
+  html_document:
+    toc:  true
+    toc_float:  true
+    code_folding:  show
+---
+
+## Lab Exam Early Release
+
+**Be aware that this is an early release. The actual lab exam will (possibly) contain a subset of these questions with (many) further sub-questions.**
+
+#  Instructions:  Lab Exam
+
++  For all lab exam questions, be sure to answer the question(s) asked.
++  In addition to answering the questions, **write 1-3 sentences describing why you made certain choices in your graphic.**  For example, why did you choose a histogram vs. density plot?  Pie chart vs. rose diagram vs. bar chart vs. spine chart?  Stacked vs. side-by-side bar chart?  Why did you choose the bin width / number of bins in your histogram?  Why did you choose the bandwidth and kernel that you picked in your density plot?  Why did you decide to arrange the graphs the way you did (e.g. in a grid, horizontally, vertically).  Etc.
++  Remember, whenever you can supplement your answer with information from a statistical test, this is very beneficial!  Feel free to run statistical tests and include this information as part of your answer.
+
+
+###  For all problems below, you should justify your answer with a single graph.
+
+Using `facet_wrap()` or `facet_grid()` counts as one graph, while using `grid.arrange()` does not.
+
+***
+***
+
+#  Data:  Tennis Tournaments!
+
+For this assignment we will use **two** datasets on tennis tournaments from the Association of Tennis Professionals (ATP). They can be found [here for the ATP Data](https://raw.githubusercontent.com/mateyneykov/315_code_data/master/data/ATP%20Data.csv) and [here for the ATP Player Data](https://raw.githubusercontent.com/mateyneykov/315_code_data/master/data/ATP%20Player%20Data.csv). Both datasets contain identical information but are organized differently. The latter dataset is derived from the first one via transformations. You might find one or the other more 
+useful to answer some of the problems, so be sure to understand the structure of both datasets. Descriptions of the two datasets can be found [here for the ATP Data](https://raw.githubusercontent.com/mateyneykov/315_code_data/master/data/ATP_Data_Readme.txt) and [here for the ATP Player Data](https://raw.githubusercontent.com/mateyneykov/315_code_data/master/data/ATP_Player_Data_Readme.txt) correspondingly. 
+
+The data was originally taken from Kaggle and is the ATP Men's Tour competitions since 2000. [More information is available here](https://www.kaggle.com/jordangoblet/atp-tour-20002016/data). Keep in mind that the dataset has been modified to serve the purposes of our class!
+
+
+<div style="width:600px">
+![](http://www.tenniscanada.com/wp-content/uploads/2016/08/us-open-tennis-2016-packages.jpg)
+</div>
+
+
+***
+***
+
+```{r}
+library(tidyverse)
+library(lubridate)
+
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+
+eujingc_315_theme <-  theme_bw() +
+  theme(axis.text = element_text(size = 12),
+        plot.title = element_text(size = 20, face = "bold", hjust = 0),
+        plot.subtitle = element_text(size = 14, face = "italic", hjust = 0),
+        text = element_text(size = 14, face = "bold", color = "darkslategrey"))
+```
+
+
+
+#  Problem 1
+
+**When the Leaves Fall**
+  
+*This problem and others require you to have access to variables that capture the year, month, and/or day (1-30) of the event. In creating these new variables (for possibly both datasets) you might find useful to recall how the functions `as.Date` and `format` work. Also possibly the library `lubridate`. Additionally the built in `month.abb` or `month.name` might be things to explore.*
+
+Characterize the distribution of the total number of games played across a year (by Month). Describe any interesting features you see. Remove *NA* if necessary, but be sure to justify.
+
+```{r cache = TRUE}
+base <- "https://raw.githubusercontent.com/mateyneykov/315_code_data/master/data/"
+tennis <- read_csv(paste(base, "ATP%20Data.csv", sep = ""),
+                   guess_max = 45000)
+player <- read_csv(paste(base, "ATP%20Player%20Data.csv", sep = ""),
+                   guess_max = 45000)
+tennis <- tennis %>%
+    mutate(Date = as.Date(Date, format = "%d/%m/%Y"),
+           Month = month(Date),
+           Year = year(Date),
+           Day = day(Date))
+player <- player %>%
+    mutate(Date = as.Date(Date, format = "%d/%m/%Y"),
+           Month = month(Date),
+           Year = year(Date),
+           Day = day(Date))
+```
+
+```{r}
+ggplot(tennis) +
+    geom_bar(fill = "lightblue", color = "black",
+             aes(x = factor(Month))) +
+    facet_wrap(Year ~ .) +
+    labs(x = "Month", y = "Count",
+         title = "Distribution of Total Games Played across a Year (by Month)",
+         subtitle = "Conditioned on the Year") +
+    eujingc_315_theme
+```
+
+We can see that in general across the various years, the distribution of tends to have two peaks in number of games, one in the early months from Janurary to Feburary, and another in the middle of the year from July to August. There is also a sharp decline in number of games at the end of the year, usually from November to December.
+
+I chose to use bar plots to visualize the counts of games across months as the months are discrete. I also facetted on the year itself so we can compare the patterns across the months, across different years to see if it is similar or not, which in this it was.
+
+
+***
+***
+
+
+#  Problem 2
+
+**Let's Make A Bet**
+
+*Background (Please read before you proceed): Betting return of a tennis player is a number (>= 1) which upon multiplication by the amount of the gambler's bet yields the return value in case that the gambler has placed a winning bet. In that way the gambler always "loses" his bet, but can potentially win if he has placed a winning bet. The amount of money that are pure win equals to (the betting return - 1) times his original bet. The betting returns are related to, but are **distinct** from the statistical odds of someone winning (one would expect that the higher the statistical ratio of one player winning is, the lower his betting return would be).*
+
+Describe the marginal distribution of betting return from CentreBet *(CentreBet is a popular sports betting website)* for all players. This variable starts with `CB`. Discard all matches with missing data, and perform any variable transformations which would lead to better visualization of the distribution. Describe all interesting features of the distribution that you can identify. 
+
+```{r}
+ggplot(player, aes(x = log(CBPlayer))) +
+    geom_density(na.rm = TRUE, fill = "lightblue") +
+    labs(x = "log(Betting Return)", y = "Density",
+         title = "Distribution of log(Betting Return)",
+         subtitle = "From CentreBet only") +
+    eujingc_315_theme
+```
+
+The marginal distribution of log-transformed betting returns from CentreBet seems to be approximately bell shaped with peak around 0.5 but with a strong right skew. The minimum is 0 which corresponds to how the actual minimum of betting returns is 1.0, but the maximum extends far in the fat right tail. There is also a bump after the first peak which forms a second peak with less density around 0.75, in that the density does not strictly decrease after the first peak.
+
+I chose to visualize the distribution with a density plot as the variable is a continuous one. I also applied a log transform as the raw values are very strongly right skewed, so the log transform brings in the long tail abit more to make it easier to visualize the distribution.
+
+***
+***
+
+
+#  Problem 3
+
+**Jacqueline's hypothesis: ATP Points Over Generations**
+
+*Add a variable `Numerical_Date` which equals the $y + \frac{m}{12} + \frac{d}{365}$, where $y$ is the year, $m$ is the numerical month and $d$ is the day of the tournament. Use the newly created variable `Numerical_Date` to indicate the tournament time throughout this problem.*
+
+Hint: You might find useful to recall how the functions `as.Date` and `format` work. Also possibly the library `lubridate`.
+
+Your tennis fanatic friend Jacqueline hypothesizes that over time ATP has gotten better at ranking players and therefore we should see a linear increase in the *average trend* of winning players ATP entry points over time. So,... is she right? In addition to the trend give general comments on the distribution of ATP points over the years. **Exclude any observations with missing values from the plot.**
+
+```{r}
+tennis_nd <- tennis %>%
+    mutate(Numerical_Date = Year + Month / 12 + Day / 365) %>%
+    filter(!is.na(WPts))
+
+ggplot(tennis_nd, aes(x = Numerical_Date, y = WPts)) +
+    geom_point(alpha = 0.1, color = "orange") +
+    geom_smooth(method = "lm") +
+    labs(x = "Time (Numerical Date)", y = "ATP Entry Points",
+         title = "ATP Entry Points of Winners against Time") +
+    eujingc_315_theme
+
+summary(lm(WPts ~ Numerical_Date, data = tennis_nd))
+```
+
+The plot above shows the distribution of ATP entry points of winners across time as a scatter plot. Additionall, there is a linear regression line to show the average trend of ATP points across time. From the positive slope of the line, we can indeed see that ATP entry points of winners tend to increase with time. The standard error, and thus the p-value of the slope is also very small such that we know with 0.95 significane that we can reject the null hypothesis that the slope is actually 0.
+
+We can see from the distribution of the ATP points over the years tend to skewed more towards higher values, but still with majority of the density lying between 0 to 2500 across the years.
+
+I chose to visualize this relationship with a scatter plot as we are looking at two continuous variables. I used alpha on the actual points themselves so we can get a better sense of the density of the points. Additionally, I plot the linear regression line so we can more easily visualize the average trend across time by looking at the slope of this line.
+
+
+***
+***
+
+# Problem 4
+
+**Rafael Nadal**
+
+*For this problem discard the "Carpet" surface from consideration and focus only on the "Clay", "Grass" and "Hard" surfaces.*
+
+Is the fact whether Rafael Nadal wins or loses independent of the surface of the court?
+
+```{r}
+# Import mosaic plots
+library(matrixStats)
+source("https://raw.githubusercontent.com/mateyneykov/315_code_data/master/code/geom_mosaic.R")
+
+player_nadal <- player %>%
+    filter(Player == "Nadal R.",
+           Surface != "Carpet")
+
+ggplot(player_nadal, aes(x = WinLoss, y = Surface)) +
+    geom_mosaic() +
+    mosaic_legend() +
+    labs(x = "Win or Loss", y = "Suraface",
+         title = "Mosaic Plot of Wins/Losses and Surface Type",
+         subtitle = "For Nadal") +
+    eujingc_315_theme
+
+nadal_tbl <- with(player_nadal, table(WinLoss, Surface))
+chisq.test(nadal_tbl)
+```
+
+From the mosaic plot and the Chi-Square test, we can see that whether Nadal wins or losses is not independent of the surface of the court. He tends to win on clay courts and does not do as well on hard courts. This is also statistically significant as the chi-square test has a low p-value of much less than 0.05, so we reject the null hypothesis that his wins and court type are independent with 0.95 significance.
+
+I chose to visualize this result with a mosaic plot as it shows both marginal and conditional distributions, but at the same time visualizes the test statistic of the chi-square test for independence. We can clearly see by the color coding where the correlations are that violate independence.
+***
+***
+
+#  Problem 5
+
+**Roger Federer**
+
+*Create a variable `Year` which equals the year of the tournament. Use `Year` to measure time for the remainder of this problem.*
+
+Characterize the marginal distribution of the **number** of wins of Roger Federer per calendar `Year`.  Are there any time periods with increases or decreases in the **proportion** of wins?
+
+```{r}
+player %>%
+    filter(Player == "Federer R.") %>%
+    ggplot(aes(x = Year, fill = WinLoss)) +
+    geom_bar(position = "dodge") +
+    labs(x = "Year", y = "Count",
+         fill = "Result",
+         title = "Distribution of Wins and Losses across Years",
+         subtitle = "For Roger Federer") +
+    eujingc_315_theme
+```
+
+The marginal distribution of wins shows an increase a general increase in number of wins from 2000 to 2006, before a slow decline in number of wins from 2006 onwards. We can also see from the side-by-side histograms that his proportion of wins has been increasing in a similar way from 2000 to 2006, before a very slow decline in proportion from 2006 onwards. The proportion of wins particularly dropped in 2013.
+
+I chose to visualize this with side-by-side barplots as firstly we are visualizing the counts across years which is discrete. By just looking at the blue bars we can see the marginal distribution of wins in terms of counts. By comparing the paired blue and red bars for each year, we can get a sense of the proportion of wins for each year.
+
+
+***
+***
+
+
+# Problem 6
+
+**The Final**
+
+Characterize the success rate of Roger Federer, Novak Djokovic and Rafael Nadal on tournament finals (see `Round`). Which one has the greatest success on the finals?
+
+```{r}
+final_players <- c("Federer R.", "Nadal R.", "Djokovic N.")
+players_final_df <- player %>%
+    filter(Round == "The Final",
+           Player %in% final_players)
+
+ggplot(players_final_df, aes(x = Player, y = WinLoss)) +
+    geom_mosaic() +
+    mosaic_legend() +
+    labs(x = "Player", y = "Result",
+         title = "Mosaic Plot of Player and Win/Loss Result") +
+    eujingc_315_theme
+
+chisq.test(with(players_final_df, table(WinLoss, Player)))
+```
+
+Although our data shows that Djokovic has the highest success rate on the finals, his win rate in the finals is not statistically significantly different from that of the rest, in that all three of them have very similar win rates. He may have the highest success rate, but he also played the least number of final matches so there is greater uncertainty in his final win rate compared to the rest.
+
+I chose to visualize this as a mosaic plot as we can formulate this as a hypothesis test where the null hypothesis is that winning and losing in the final is independent of the players. The mosaic plot visualizes the distributions of each player's winning rate, along with the color encoding the test statistic. From the all-white cells, we know that there is insufficient evidence to reject the null hypothesis t 0.95 significance that all 3 player's winning rates are the same. This is further confirmed by the p-value of the chi-square test which is greater than 0.05.
+
+
+***
+***
+
+# Problem 7
+
+**ATP Points**  
+
+Characterize the distribution of the log of Winner's ATP points.
+
+```{r}
+tennis %>%
+    filter(!is.na(WPts)) %>%
+    ggplot(aes(x = log(WPts))) +
+    geom_density(fill = "lightblue") +
+    facet_wrap(Year ~ .) +
+    labs(x = "log(ATP Points of Winners)", y = "Density",
+         title = "Distribution of log(Winner's ATP Points)") +
+    eujingc_315_theme
+```
+
+The distribution is roughly bell-shaped with its peak around 7 log points. It has a fat but short right tail that cuts off slighly before 10 log points, and a long but thing left tail.
+
+
+***
+***
+
