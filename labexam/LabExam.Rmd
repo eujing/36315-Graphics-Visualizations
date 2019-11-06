@@ -1,0 +1,168 @@
+---
+title: "36-315 Lab Exam Problems, Fall 2019"
+author: "Eu Jing Chua"
+date: "Due Friday, Nov 1 2019 at the end of lab on Canvas"
+output: 
+  html_document:
+    toc:  true
+    toc_float:  true
+    code_folding:  show
+---
+
+## Lab Exam
+
+#  Data:  Tennis Tournaments!
+
+
+***
+***
+
+
+#  Problem 1
+
+
+**When the Leaves Fall**
+  
+```{r}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+library(tidyverse)
+library(lubridate)
+
+
+eujingc_315_theme <-  theme_bw() +
+  theme(axis.text = element_text(size = 12),
+        plot.title = element_text(size = 20, face = "bold", hjust = 0),
+        plot.subtitle = element_text(size = 14, face = "italic", hjust = 0),
+        text = element_text(size = 14, face = "bold", color = "darkslategrey"))
+
+base <- "https://raw.githubusercontent.com/mateyneykov/315_code_data/master/data/"
+tennis <- read_csv(paste(base, "ATP%20Data.csv", sep = ""),
+                   guess_max = 45000)
+player <- read_csv(paste(base, "ATP%20Player%20Data.csv", sep = ""),
+                   guess_max = 45000)
+tennis <- tennis %>%
+    mutate(Date = as.Date(Date, format = "%d/%m/%Y"),
+           Month = month(Date),
+           Year = year(Date),
+           Day = day(Date))
+player <- player %>%
+    mutate(Date = as.Date(Date, format = "%d/%m/%Y"),
+           Month = month(Date),
+           Year = year(Date),
+           Day = day(Date))
+```
+
+```{r}
+tennis %>%
+    mutate(Before2010 = ifelse(Year <= 2010, "<= 2010", "> 2010")) %>%
+    ggplot() +
+    geom_bar(color = "black",
+             aes(x = factor(Month), fill = factor(Court))) +
+    facet_grid(Surface ~ Before2010, margin = TRUE) +
+    labs(x = "Month", y = "Count", fill = "Court",
+         title = "Distribution of Total Games Across Months",
+         subtitle = "Conditioned on the Surface and Year") +
+    eujingc_315_theme
+```
+
+
+a.  The overall marginal distribution of total number of matches played across the months is roughly uniform, but takes a significant dip towards the end of the year in months around November and December. There is also a slighly peak at the start of the year around January and February, and in the middle of the year from around May to August.
+
+b.  When we look at the conditional distributions based on Surface, we can further see that matches tend to be played in Hard surfaces at the start and end of the year, from January to March and August to October, while matches on Grass are almost exclusively played in the middle of the year from June to July. As for clay, we have a similar pattern to Grass where matches tend to be played in the middle of the year, but also a small number of matches are played at the start from February to July.
+
+c.  When we look at the previous conditional distributions, but now additionally conditioned on if the match was played before or during 2010, and on the type of Court, we can see in general a decline in the number of matches between before or during 2010 and after.
+
+For carpet surfaces, there used to be only indoor matches before or during 2010, but no longer after. 
+Clay and grass never had any indoor matches, which make sense as these are generally outdoor courts.
+But for hard surfaces, the proportion of indoor and outdoor matches before or during 2010 and after did not change much, only the total number of games decreased aross the board.
+
+d.  We no longer see any carpet matches as there might have been a stoppage of carpet matches after 2010.
+It makes sense that there are no clay and grass matches indoors all the time, as clay and grass courts generally need to be outdoors to be maintained.
+As for hard courts, there was not much change in proportions between indoor and outdoor court usage.
+
+e.  I choose bar charts because we wish to visualize the counts of matches across months, which is discrete. I used facetting to show the different conditional distributions of surfaces vertically so that these conditional distributions can be compared more easily. I showed the type of year horizontally too so that we can see the differences before and after. Finally, I stacked the bar charts based on court type so we can further see the breakdown.
+
+
+***
+***
+
+# Problem 4
+
+**Rafael Nadal and Novak Djokovic**
+
+```{r}
+# Import mosaic plots
+library(matrixStats)
+source("https://raw.githubusercontent.com/mateyneykov/315_code_data/master/code/geom_mosaic.R")
+
+player_two <- player %>%
+    filter(Player %in% c("Nadal R.", "Djokovic N."),
+           Surface != "Carpet")
+
+ggplot(player_two, aes(x = WinLoss, y = Surface)) +
+    facet_grid(Player ~ .) +
+    geom_mosaic() +
+    mosaic_legend() +
+    labs(x = "Win or Loss", y = "Surface",
+         title = "Mosaic Plot of Wins/Losses and Surface Type",
+         subtitle = "Conditioned on Player") +
+    eujingc_315_theme
+
+```
+
+
+a.  Nadal's wins and losses are not independent of the surface of the court. He tends to win more on clay, and does not win as much on hard surfaces, as seen from the color coding of the standardized residuals.
+
+b.  Similarly, Djokovic's wins and losses are not independent of the surface of the court. He also tends to win more on clay, and does not win as much on hard surfaces, as seen from the color coding of the standardized residuals.
+
+c. 
+```{r}
+nadal_tbl <- with(player_two %>% filter(Player == "Nadal R."),
+                  table(WinLoss, Surface))
+chisq.test(nadal_tbl)
+
+djok_tbl <- with(player_two %>% filter(Player == "Djokovic N."),
+                  table(WinLoss, Surface))
+chisq.test(djok_tbl)
+```
+
+We perform a chi-square test of independence, where the null hypothesis is that Nadal's wins and losses are independent of the surface type. However, we can see that the p-value is extremely small, less than 0.05. Thus we have enough evidence to reject the null hypothesis that his wins and losses are independent of the surface type.
+
+However when we do the same for Djokovic, we see that the p-value is not less than 0.05. There must be a bug with my mosaic plot, but this means that we fail to reject the null hypothesis and conclude his wins and losses and surface type are independent.
+
+
+d.  I chose a mosaic plot as it shows the conditional and marginal distributions of their proportions of winning or losing based on the surface type. Also, the color coding shows the test statistic of the chi-square test itself, allowing us to easily see where the independence assumptions fail and how. Also, I facetted on the players so I could see the mosaic plot for each player, but I guess it did not work as expected
+
+***
+***
+
+# Problem 7
+
+**ATP Points Round by Round**
+
+```{r}
+tennis %>%
+    filter(!is.na(WPts)) %>%
+    ggplot(aes(x = log(WPts))) +
+    geom_density(fill = "lightblue") +
+    facet_grid(Round ~ Series, margin = TRUE) +
+    labs(x = "log(ATP Points of Winners)", y = "Density",
+         title = "Distribution of log(Winner's ATP Points)",
+         subtitle = "Conditioned on Round and Series") +
+    eujingc_315_theme
+```
+
+
+a.  The distribution is roughly bell-shaped with its peak around 7 log points. It has a fat but short right tail that cuts off slighly before 10 log points, and a long but thing left tail.
+
+b.  As the players make it through the tournament rounds, the distribution does change as seen from the last column of the graphic. Although the peak stays roughly around the same spot, we can see the right tail behavior of each distribution change. In the early rounds, the right tail is skinny, and gets fatter through the middle rounds, but gets skinnier again towards the final rounds.
+
+c.  The distribution does change across different series too. We see a much higher peak for ATP Finals at around 8.5 log points with some outliers to the left. The other series have roughly the same peaks, but different right tail behavior. For example, Masters and Grand Slam has a fatter right tail with more density than the remaining series which are quite similar.
+
+d.  I would order it as: ATP Finals, ATP 250, ATP 500, Masters, then Grand Slam. The distribution for ATP Finals has the highest peak in points, and has relatively low spread, indicating selectiveness and small range of expertise. The rest have roughly the same peaks, but ATP 250 followed by 500, then Masters then Grand Slam has increasing amounts of spread in their distributions, indicating a wider range of experience.
+
+e.  I chose to use a density plot to visualize the distributions of this continuous variable log points as it is continuous. I think the defualt bandwidth selection is good in showing both the features of the distributions without showing too much variations. I facetted on both Series horizontally and Rounds vertically, as well as the marginal distribution, so we can compare all the different conditionals and still see the marginal. I chose to do Rounds vertically as there is inherently an ordering and I would like to see if the distributions shift to the left or right based on this ordering. Series was done horizontally as there was no clear ordering but this still let us compare the conditionals in one graphic.
+
+***
+***
+

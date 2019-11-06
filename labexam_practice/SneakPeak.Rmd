@@ -43,10 +43,10 @@ The data was originally taken from Kaggle and is the ATP Men's Tour competitions
 ***
 
 ```{r}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 library(tidyverse)
 library(lubridate)
 
-knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 
 eujingc_315_theme <-  theme_bw() +
   theme(axis.text = element_text(size = 12),
