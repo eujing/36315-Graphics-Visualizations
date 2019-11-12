@@ -6,7 +6,7 @@ output:
   html_document:
     toc:  true
     toc_float:  true
-    code_folding:  show
+    code_folding:  hide
 ---
 
 ##  Homework 9
@@ -30,16 +30,7 @@ Using the tidyverse style guide.
 
 ## Problem 1
 
-(20 points)
-
-Get the datasets
-wineQualityReds.csv from Canvas.
-
-(a) (10 points) Plot a dependence graph for the red wines.  You need to choose a
-significance level alpha.  This acts as a tuning parameter: small
-alpha gives a sparse graph.  Choose alpha so that the graph is fairly
-sparse.  (No right answer here; just use your judgement.)  What alpha
-did you choose?
+(a) I chose an alpha level of 0.0000001.
 
 ```{r}
 library(igraph)
@@ -52,9 +43,9 @@ g_theme <- theme(axis.text.x = element_blank(),
 
 red_wines <- read_csv("wineQualityReds.csv")
 C <- cor(red_wines)
-alpha <- 0.5
+alpha <- 0.0000001
 n <- nrow(red_wines)
-Z <- 0.5 * (log(1 + C) / log(1 - C))
+Z <- 0.5 * log((1 + C) / (1 - C))
 critical_value <- - qnorm(alpha / 2) / sqrt(n - 3)
 A <- (abs(Z) > critical_value) * 1.0
 diag(A) <- 0
@@ -69,10 +60,9 @@ ggraph(g, layout = "fr") +
 ```
 
 
-(b) (5 points) What variables are related to quality?
+(b) From the dependence graph, we can see at this alpha level that citric acid, density, sulphates, volatile acidity, alcohol and total sulfur dioxide are related to quality.
 
-(c) (5 points) Repeat (a) and (b) using a conditional independence graph.
-
+(c)
 ```{r}
 library(SIN)
 
@@ -122,24 +112,26 @@ my_tweets <- dplyr::select(airline_tweets, tweet_id, text) %>%
   with(wordcloud(word, n, max.words = 100)) 
 ```
 
-c.  As expected, the most common words within each airline is the airline name and "flight". However, we can also see that most airlines except Delta have the word "cancelled" being frequent, and United and US airways have the words "customer" and "service" being more frequent than the rest the other airlines.
+c.  As expected, the most common words within each airline is the airline name and "flight". However, we can also see that most airlines except Delta and Virgin America have the word "cancelled" being frequent, and United and US airways have the words "customer" and "service" being more frequent than the rest the other airlines.
 
-```{r cache = TRUE}
-library(ggwordcloud)
+```{r}
 my_tweets_airlines <- dplyr::select(airline_tweets, tweet_id, text, airline) %>%
   unnest_tokens(word, text) %>%
   anti_join(stop_words) %>%
-  group_by(airline) %>%
-  count(word, sort = TRUE) %>%
-  top_n(30) %>%
-  ungroup()
+  count(word, airline, sort = TRUE) %>%
+  top_n(100)
 
-ggplot(my_tweets_airlines, aes(label = word, size = n)) +
-  geom_text_wordcloud_area(rm_outside = TRUE) +
-  scale_size_area(max_size = 17) +
-  facet_wrap(~ airline, nrow = 2) +
-  labs(title = "Word Cloud of Tweets by Airline") +
-  eujingc_315_theme
+ggplot(my_tweets_airlines) +
+    aes(x = 1, y = 1, size = n, label = word) +
+    geom_text_repel(segment.size = 0, force = 50) +
+    scale_size(range = c(1, 15), guide = FALSE) +
+    scale_x_continuous(breaks = NULL) +
+    scale_y_continuous(breaks = NULL) +
+    facet_wrap(~ airline, nrow = 2) +
+    labs(x = "", y = "",
+         title = "Wordcloud of Tweets by Airlines") +
+    scale_color_viridis(discrete = TRUE) +
+    eujingc_315_theme
 ```
 
 
@@ -148,17 +140,7 @@ ggplot(my_tweets_airlines, aes(label = word, size = n)) +
 
 ## Problem 3
 
-
-(20 points; 4 points for each part)
-
-**Sentiment Analysis and Word Clouds with `ggplot()`**
-
-Load the airline tweets dataset from [here](https://raw.githubusercontent.com/mateyneykov/315_code_data/master/data/Tweets.csv).  
-
-Following the example [here](http://mhairihmcneill.com/blog/2016/04/05/wordclouds-in-ggplot.html), create three graphs using the airline tweet text:
-
-a.  A word cloud with the words colored by airline.
-
+a.  
 ```{r}
 library(ggrepel)
 
@@ -182,8 +164,7 @@ ggplot() +
 ```
 
 
-b.  A facetted word cloud (facetting by airline), colored by `user_timezone`.
-
+b.  
 ```{r}
 word_counts %>%
     count(word, airline, user_timezone, sort = TRUE) %>%
@@ -206,8 +187,7 @@ ggplot() +
 c.  
 We can see that the frequency of tweets with the airline name for Delta and US Airways from users in the Central timezone is much less than the other airlines. Other than that, we see similar patterns in each airline's tweet word cloud with the highest frequencies being the airline name itself and "flight".
 
-d.  Follow the example in Section 2.5 of the Tidy Text Mining book to join the **sentiment** of each word to the word counts.  Then create a facetted word cloud (facetting by airline), colored by the `sentiment` of the word.
-
+d.  
 ```{r}
 word_counts %>%
     inner_join(get_sentiments("bing")) %>%
@@ -235,15 +215,40 @@ e.  We can see from the plot that United and US Airways has the highest amount o
 
 ##  Problem 4
 
-(20 points)
+We can see that the first topic is based more on financial words like quantities and markets, while the second topic is based more on sports-related words like cricket, captain and match.
 
-**Topic Modeling**
+```{r}
+library(topicmodels)
+articles <- read_csv("Articles.csv")
 
-a.  (0 points) Read Chapter 6 of the [Tidy Text Mining](http://tidytextmining.com/) book on Topic Modeling.
+articles <- articles %>% mutate(document = rownames(articles))
+articles_td <- articles %>%
+    unnest_tokens(word, Article) %>%
+    anti_join(stop_words) %>%
+    count(document, word)
 
-b.  (0 points) Download the [News Articles](https://www.kaggle.com/asad1m9a9h6mood/news-articles) dataset from Kaggle.
+articles_dtm <- articles_td %>% cast_dtm(document, word, n)
+articles_lda <- LDA(articles_dtm, k = 2, control = list(seed = 42))
+articles_topics <- tidy(articles_lda, matrix = "beta")
+articles_top_terms <- articles_topics %>%
+    group_by(topic) %>%
+    top_n(10, beta) %>%
+    ungroup() %>%
+    arrange(topic, -beta)
 
-c.  (20 points)  Recreate the analysis in Chapter 6.1.1 using this dataset (as we did in class).
+articles_top_terms %>%
+    mutate(term = reorder_within(term, beta, topic)) %>%
+    ggplot(aes(x = term, y = beta, fill = factor(topic))) +
+    geom_col(show.legend = FALSE) +
+    facet_wrap(~ topic, scales = "free") +
+    labs(x = "Term", y = "Beta",
+         title = "Top 10 High Probability Words by Topic",
+         subtitle = "From LDA on Articles Dataset") +
+    coord_flip() +
+    scale_x_reordered() +
+    scale_fill_viridis(discrete = TRUE) +
+    eujingc_315_theme
+```
 
 
 

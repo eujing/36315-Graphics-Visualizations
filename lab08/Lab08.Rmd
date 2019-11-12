@@ -1,0 +1,125 @@
+---
+title: "36-315 Lab 08"
+author: "Your Names Here"
+date: "Due Saturday, Nov 9, 2019 (6:30pm)"
+output: 
+  html_document:
+    toc:  true
+    toc_float:  true
+    code_folding:  show
+---
+
+
+##  Lab 08:  Forming your groups. 
+
+
+
+1. Form groups. At most 4 per group. The TA's will assign you randomly if you prefer.
+
+2. Choose one person in the group to submit this lab.
+
+
+3. For the group project / poster presentation, you get to pick your own dataset.
+But there are some requirements:
+
+a.  Your data must be contain a mix of categorical and continuous
+variables and be complex enough that you can create 8 interesting
+graphs (so datasets with only a few variables will not work).
+
+b.  You CANNOT use any of the datasets that were used in any previous
+assignments in this course or any other course you have taken.  You
+must use a dataset that everyone in your group has never worked with
+before.
+
+c.  I'm strongly encouraging groups to pick different datasets, so
+that no group is using the same dataset.  
+
+
+
+4. Now read these rules about the project:
+
+
+
+a.  Your project should use a variety of non-trivial graphs such as:
+
++  Maps
++  Network diagrams or independence graphs
++  Time series plots
++  Dendrograms
++  Graphs relating to text analysis
+
+
+
+
+b.  Each group can have no more than two graphs that show a single
+variable (e.g. one-variable bar charts, histograms, density
+estimates).
+
+c.  Don't have more than 2-3 of the same type of graph.  For example,
+if five of your graphs are stacked histograms, that's bad; use some
+density plots instead.  If five of your graphs are scatterplots,
+that's bad; use heat maps, contour plots, regression plots, etc
+instead.
+
+d.  **Your graphs should tell a somewhat cohesive story.** Come up
+with some general questions you want to answer with your dataset, and
+use your graphs to walk the viewer through a comprehensive analysis of
+those questions.  Use your graphs to demonstrate your findings and
+conclusions.
+
+
+
+
+
+
+
+5. Here are some repositories with many, many datasets to choose from:
+
++  [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/datasets.html)
++  [Kaggle](https://www.kaggle.com/datasets)
++  [Dream To Learn](https://dreamtolearn.com/ryan/1001_datasets)
++  [Google Public Data Explorer](https://www.google.com/publicdata/directory)
++  [The US Government](https://www.data.gov/)
++  [Stanford Statistics](http://statweb.stanford.edu/~sabatti/data.html)
++  [American Psychological Asosciation](http://www.apa.org/research/responsible/data-links.aspx)
++  [GitHub](https://github.com/caesar0301/awesome-public-datasets)
++  [FiveThirtyEight](https://github.com/fivethirtyeight/data)
+
+You do **not** have to pick a dataset from one of these places.  These are just suggestions.
+Take a quick look at some of these repositories now.
+
+
+
+
+
+
+
+##  6. What You Have To Turn In Now 
+
+(Only one person in the group needs to submit this lab)
+
+(100 points)
+
+a. List the names of the group members.
+
+b. List two potential datasets that you can use for your group
+project.  Include the name of the dataset, the source (e.g. UCI
+Machine Learning Repository), and a link. Additionally provide 2
+general questions that you think you could explore/visualize with the
+dataset (and list the variables that might be useful.)
+
+You are **NOT** bound to using one of these datsets for your group project.  Your group will finalize this choice next week.
+
+
+## Arrange to meet with your team and choose a dataset.
+
+
+**The lab is due on Saturday at 6:30pm, not Friday.  You should use
+  this extra time to coordinate with your group members and find four
+  potential datasets that you all agree on!**
+
+***
+***
+***
+***
+
