@@ -1,0 +1,275 @@
+---
+title: "36-315 Homework 9, Fall 2019"
+author: "Eu Jing Chua"
+date: "Due Nov 13, 2019 (11pm) on Canvas"
+output: 
+  html_document:
+    toc:  true
+    toc_float:  true
+    code_folding:  show
+---
+
+##  Homework 9
+
+```{r}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+```{r}
+library(tidyverse)
+library(viridis)
+
+eujingc_315_theme <-  theme_bw() +
+  theme(axis.text = element_text(size = 12),
+        plot.title = element_text(size = 20, face = "bold", hjust = 0),
+        plot.subtitle = element_text(size = 14, face = "italic", hjust = 0),
+        text = element_text(size = 14, face = "bold", color = "darkslategrey"))
+```
+
+Using the tidyverse style guide.
+
+## Problem 1
+
+(20 points)
+
+Get the datasets
+wineQualityReds.csv from Canvas.
+
+(a) (10 points) Plot a dependence graph for the red wines.  You need to choose a
+significance level alpha.  This acts as a tuning parameter: small
+alpha gives a sparse graph.  Choose alpha so that the graph is fairly
+sparse.  (No right answer here; just use your judgement.)  What alpha
+did you choose?
+
+```{r}
+library(igraph)
+library(ggraph)
+
+g_theme <- theme(axis.text.x = element_blank(),
+          axis.title.x = element_blank(),
+          axis.text.y = element_blank(),
+          axis.title.y = element_blank())
+
+red_wines <- read_csv("wineQualityReds.csv")
+C <- cor(red_wines)
+alpha <- 0.5
+n <- nrow(red_wines)
+Z <- 0.5 * (log(1 + C) / log(1 - C))
+critical_value <- - qnorm(alpha / 2) / sqrt(n - 3)
+A <- (abs(Z) > critical_value) * 1.0
+diag(A) <- 0
+g <- graph_from_adjacency_matrix(A, mode = "undirected")
+ggraph(g, layout = "fr") +
+    geom_edge_link(color = "grey") +
+    geom_node_point() +
+    geom_node_text(aes(label = name), repel = TRUE) +
+    labs(title = "Dependences for Red Wines") +
+    eujingc_315_theme +
+    g_theme
+```
+
+
+(b) (5 points) What variables are related to quality?
+
+(c) (5 points) Repeat (a) and (b) using a conditional independence graph.
+
+```{r}
+library(SIN)
+
+out <- sinUG(var(red_wines), n)
+alpha <- 0.01
+diag(out) <- 1
+A <- 1.0 * (out < alpha)
+g <- graph_from_adjacency_matrix(A, mode = "undirected")
+ggraph(g, layout = "fr") +
+    geom_edge_link(color = "grey") +
+    geom_node_point() +
+    geom_node_text(aes(label = name), repel = TRUE) +
+    labs(title = "Conditional Independences for Red Wines") +
+    eujingc_315_theme +
+    g_theme
+```
+
+The variables related to quality according to the conditional independence graph are:
+
+* Total sulfur dioxide
+* Volatile acidity
+* Chlorides
+* Alcohol
+* Sulphates
+
+
+
+
+##  Problem 2
+
+a.  The `unnest_token()` function tokenizes texts into logical chunks such as sentences and paragraphs.
+
+b.  The column `text` contains the actual text of the tweets. From the word cloud, we can see the most common words are flight, united, as well as the names of some airlines.
+
+```{r, warning = F, message = F}
+library(tidyverse)
+library(tidytext)
+library(wordcloud)
+data(stop_words)
+
+airline_tweets <- read_csv("https://raw.githubusercontent.com/mateyneykov/315_code_data/master/data/Tweets.csv")
+
+my_tweets <- dplyr::select(airline_tweets, tweet_id, text) %>%
+  unnest_tokens(word, text) %>%
+  anti_join(stop_words) %>%
+  count(word) %>%
+  with(wordcloud(word, n, max.words = 100)) 
+```
+
+c.  As expected, the most common words within each airline is the airline name and "flight". However, we can also see that most airlines except Delta have the word "cancelled" being frequent, and United and US airways have the words "customer" and "service" being more frequent than the rest the other airlines.
+
+```{r cache = TRUE}
+library(ggwordcloud)
+my_tweets_airlines <- dplyr::select(airline_tweets, tweet_id, text, airline) %>%
+  unnest_tokens(word, text) %>%
+  anti_join(stop_words) %>%
+  group_by(airline) %>%
+  count(word, sort = TRUE) %>%
+  top_n(30) %>%
+  ungroup()
+
+ggplot(my_tweets_airlines, aes(label = word, size = n)) +
+  geom_text_wordcloud_area(rm_outside = TRUE) +
+  scale_size_area(max_size = 17) +
+  facet_wrap(~ airline, nrow = 2) +
+  labs(title = "Word Cloud of Tweets by Airline") +
+  eujingc_315_theme
+```
+
+
+
+
+
+## Problem 3
+
+
+(20 points; 4 points for each part)
+
+**Sentiment Analysis and Word Clouds with `ggplot()`**
+
+Load the airline tweets dataset from [here](https://raw.githubusercontent.com/mateyneykov/315_code_data/master/data/Tweets.csv).  
+
+Following the example [here](http://mhairihmcneill.com/blog/2016/04/05/wordclouds-in-ggplot.html), create three graphs using the airline tweet text:
+
+a.  A word cloud with the words colored by airline.
+
+```{r}
+library(ggrepel)
+
+word_counts <- airline_tweets %>%
+  unnest_tokens(word, text) %>%
+  anti_join(stop_words)
+
+word_counts %>%
+    count(word, airline, sort = TRUE) %>%
+    top_n(50) %>%
+ggplot() +
+    aes(x = 1, y = 1, size = n, label = word, color = airline) +
+    geom_text_repel(segment.size = 0, force = 50) +
+    scale_size(range = c(1, 15), guide = FALSE) +
+    scale_x_continuous(breaks = NULL) +
+    scale_y_continuous(breaks = NULL) +
+    labs(x = "", y = "", color = "Airline",
+         title = "Wordcloud of Airline Tweets") +
+    scale_color_viridis(discrete = TRUE) +
+    eujingc_315_theme
+```
+
+
+b.  A facetted word cloud (facetting by airline), colored by `user_timezone`.
+
+```{r}
+word_counts %>%
+    count(word, airline, user_timezone, sort = TRUE) %>%
+    top_n(100) %>%
+ggplot() +
+    aes(x = 1, y = 1, size = n, label = word, color = user_timezone) +
+    geom_text_repel(segment.size = 0, force = 50) +
+    scale_size(range = c(1, 10), guide = FALSE) +
+    scale_x_continuous(breaks = NULL) +
+    scale_y_continuous(breaks = NULL) +
+    labs(x = "", y = "", color = "Timezone",
+         title = "Wordcloud of Airline Tweets",
+         subtitle = "By Airlines") +
+    facet_wrap(~ airline) +
+    scale_color_viridis(discrete = TRUE) +
+    eujingc_315_theme
+```
+
+
+c.  
+We can see that the frequency of tweets with the airline name for Delta and US Airways from users in the Central timezone is much less than the other airlines. Other than that, we see similar patterns in each airline's tweet word cloud with the highest frequencies being the airline name itself and "flight".
+
+d.  Follow the example in Section 2.5 of the Tidy Text Mining book to join the **sentiment** of each word to the word counts.  Then create a facetted word cloud (facetting by airline), colored by the `sentiment` of the word.
+
+```{r}
+word_counts %>%
+    inner_join(get_sentiments("bing")) %>%
+    count(word, sentiment, airline, sort = TRUE) %>%
+    top_n(100) %>%
+ggplot() +
+    aes(x = 1, y = 1, size = n, label = word, color = sentiment) +
+    geom_text_repel(segment.size = 0, force = 50) +
+    scale_size(range = c(1, 10), guide = FALSE) +
+    scale_x_continuous(breaks = NULL) +
+    scale_y_continuous(breaks = NULL) +
+    labs(x = "", y = "", color = "Sentiment",
+         title = "Wordcloud of Airline Tweets",
+         subtitle = "By Airlines") +
+    facet_wrap(~ airline) +
+    scale_color_viridis(discrete = TRUE) +
+    eujingc_315_theme
+```
+
+
+e.  Interpret the plot in (d).  Are there any interesting features across the airlines?
+
+***
+***
+
+##  Problem 4
+
+(20 points)
+
+**Topic Modeling**
+
+a.  (0 points) Read Chapter 6 of the [Tidy Text Mining](http://tidytextmining.com/) book on Topic Modeling.
+
+b.  (0 points) Download the [News Articles](https://www.kaggle.com/asad1m9a9h6mood/news-articles) dataset from Kaggle.
+
+c.  (20 points)  Recreate the analysis in Chapter 6.1.1 using this dataset (as we did in class).
+
+
+
+***
+
+##  Problem 5
+
+(20 points)
+
+
+Briefly describe the dataset
+that your team will analyze for the final project.
+
+
+
+***
+***
+
+
+
+
+***
+***
+***
+***
+***
+***
+
+
