@@ -176,7 +176,7 @@ ggplot() +
     scale_x_continuous(breaks = NULL) +
     scale_y_continuous(breaks = NULL) +
     labs(x = "", y = "", color = "Airline",
-         title = "Wordcloud of Airline Tweets") +
+         title = "Wordcloud of Airline Tweet") +
     scale_color_viridis(discrete = TRUE) +
     eujingc_315_theme
 ```
@@ -195,7 +195,7 @@ ggplot() +
     scale_x_continuous(breaks = NULL) +
     scale_y_continuous(breaks = NULL) +
     labs(x = "", y = "", color = "Timezone",
-         title = "Wordcloud of Airline Tweets",
+         title = "Wordcloud of Timezones of Airline Tweets",
          subtitle = "By Airlines") +
     facet_wrap(~ airline) +
     scale_color_viridis(discrete = TRUE) +
@@ -220,7 +220,7 @@ ggplot() +
     scale_x_continuous(breaks = NULL) +
     scale_y_continuous(breaks = NULL) +
     labs(x = "", y = "", color = "Sentiment",
-         title = "Wordcloud of Airline Tweets",
+         title = "Wordcloud of Sentiments of Airline Tweet",
          subtitle = "By Airlines") +
     facet_wrap(~ airline) +
     scale_color_viridis(discrete = TRUE) +
@@ -228,7 +228,7 @@ ggplot() +
 ```
 
 
-e.  Interpret the plot in (d).  Are there any interesting features across the airlines?
+e.  We can see from the plot that United and US Airways has the highest amount of negative sentiments compared to other airlines, mainly pertaining to delays and lost items. Southwest also seems to have the largest proportion of positive sentiments with than any other airlines.
 
 ***
 ***
