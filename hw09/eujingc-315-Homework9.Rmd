@@ -115,6 +115,7 @@ my_tweets <- dplyr::select(airline_tweets, tweet_id, text) %>%
 c.  As expected, the most common words within each airline is the airline name and "flight". However, we can also see that most airlines except Delta and Virgin America have the word "cancelled" being frequent, and United and US airways have the words "customer" and "service" being more frequent than the rest the other airlines.
 
 ```{r}
+library(ggrepel)
 my_tweets_airlines <- dplyr::select(airline_tweets, tweet_id, text, airline) %>%
   unnest_tokens(word, text) %>%
   anti_join(stop_words) %>%
@@ -256,12 +257,21 @@ articles_top_terms %>%
 
 ##  Problem 5
 
-(20 points)
 
+We will be using data from nflscapR which has data from many aspects of football games from the NFL all the way back to 2009.
 
-Briefly describe the dataset
-that your team will analyze for the final project.
+We have play-by-play data, which contains timeseries data (events) at a game level, recording variables such as:
+* Which team is currently in defense
+* Distance to opponent endzone
+* Player who just intercepted the ball
+* Was a rush attempted
+* Penalty type
+* Amount of yards gained on the play
+* and many more categorical and continuous quantities that describe events in a game
 
+We can use such data to answer questions such as:
+1) Can we have low-dimension projections of team strategies and see if there are any clusters?
+2) Which players are the most valuable in a team?
 
 
 ***
