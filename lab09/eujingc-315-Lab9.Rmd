@@ -1,0 +1,331 @@
+---
+title: "36-315 Lab 09"
+author: 
+- "Eu Jing Chua"
+- "eujingc"
+- "Style guide: Tidyverse styleguide"
+- "Collaborators: NIL"
+date: "Due Friday, Nov 15, 2019 (6:30pm) on Canvas"
+output: 
+  html_document:
+    toc:  true
+    toc_float:  true
+    code_folding:  hide
+---
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+###########################
+# DEFAULT SETTINGS
+###########################
+knitr::opts_chunk$set(message = FALSE) # include this if you don't want markdown to knit messages
+knitr::opts_chunk$set(warning = FALSE) # include this if you don't want markdown to knit warnings
+
+###########################
+# LIBRARIES
+###########################
+library(tidyverse)
+library(gridExtra)
+library(knitr)
+library(pander)
+library(MASS)
+library(tidyverse)
+library(GGally)
+library(forcats)
+library(reshape2)
+library(ggmap)
+library(viridis)
+
+eujingc_315_theme <-  theme_bw() +
+  theme(axis.text = element_text(size = 12),
+        plot.title = element_text(size = 20, face = "bold", hjust = 0),
+        plot.subtitle = element_text(size = 14, face = "italic", hjust = 0),
+        text = element_text(size = 14, face = "bold", color = "darkslategrey"))
+```
+
+
+
+***
+***
+
+#  Problem 1
+
+## a. 
+
+There are 16 columns and 4359 rows. the earliest trip date is 2016-06-01, and the latest is 2016-06-30
+
+```{r}
+# Only use the June 2016 subset
+bike <- read_csv("http://stat.cmu.edu/315/data/nyc-citi-bike-subset.csv")
+
+# Add start_date variable
+bike <- mutate(bike,
+               start_date = as.Date(starttime, format = "%m/%d/%y"))
+
+dim(bike)
+summary(bike$start_date)
+```
+
+
+## b. 
+
+```{r}
+#  Summarize bike, creating a new data.frame that includes the number
+#  of trips taken on each day
+
+trips_per_day <- bike %>%
+  group_by(start_date) %>%
+  summarize(n_trips = n())
+
+#  Create a time series plot with the dates on the x-axis and the number of
+#  trips per day on the y-axis
+
+ggplot(trips_per_day, aes(x = start_date, y = n_trips)) +
+  geom_line() +
+  scale_x_date(date_breaks = "1 week", date_labels = "%B %d") +
+  labs(x = "Date", y = "Count",
+       title = "Number of Trips over Time") +
+    eujingc_315_theme +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+
+## c. 
+
+We can see more variability in customers compared to subcribers. This makes sense as subcribers would more consistently use the service in comparison to one-off customers.
+
+```{r}
+#  Summarize bike, creating a new data.frame that includes the number
+#  of trips taken on each day, split by usertype
+
+trips_per_day_usertype <- bike %>%
+  group_by(start_date, usertype) %>%
+  summarize(n_trips = n())
+
+#  Create a time series plot with the dates on the x-axis and the number of
+#  trips per day on the y-axis, split by usertype
+
+ggplot(trips_per_day_usertype,
+       aes(x = start_date, y = n_trips, color = usertype)) +
+  geom_line() +
+  scale_x_date(date_breaks = "1 week", date_labels = "%B %d") +
+  labs(x = "Date", y = "Count", color = "User Type",
+       title = "Number of Trips over Time") +
+    scale_color_viridis(discrete = TRUE) +
+    eujingc_315_theme +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+
+## d.
+
+We can see that the customer's moving average still has higher variation than the suscriber's.
+
+```{r}
+library(ggseas)
+
+ggplot(trips_per_day_usertype,
+       aes(x = start_date, y = n_trips,
+           color = usertype)) +
+  geom_line() +
+  stat_rollapplyr(align = "right", FUN = mean,
+                  width = 7, size = 1.5, alpha = 0.5) +
+  scale_x_date(date_breaks = "1 week", date_labels = "%B %d") +
+  labs(x = "Date", y = "Count", color = "User Type",
+       title = "Number of Trips over Time",
+       subtitle = "Thicker lines are 7-day moving averages (right aligned)") +
+    scale_color_viridis(discrete = TRUE) +
+    eujingc_315_theme +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+
+***
+***
+
+
+#  Problem 2
+
+
+## a. 
+
+Most of the autocorrelations are near zero, except for lag 0. This makes sense as at lag 0, we are calculating the correlation of a random variable with exactly itself, which should always be 1.
+
+```{r}
+rand_ts <- rnorm(1000)
+acf(rand_ts, plot = FALSE)
+```
+
+
+
+
+
+## b. 
+
+Non of the autocorrelations are significantly different from zero, except at lag 0. Again, this makes sense as all the variables are independent except for each variable with itself, which is perfectly correlated.
+
+
+```{r}
+acf(rand_ts, plot = TRUE, main = "Autocorrelation of Independent Gaussians")
+```
+
+
+
+## c. 
+
+```{r}
+bike_customer_acf <- acf(filter(trips_per_day_usertype,
+                                usertype == "Customer")$n_trips,
+                         plot = FALSE)
+
+bike_subscriber_acf <- acf(filter(trips_per_day_usertype,
+                                 usertype == "Subscriber")$n_trips,
+                          plot = FALSE)
+```
+
+```{r}
+bike_customer_acf_df <- data.frame(lag = bike_customer_acf$lag,
+                                   acf = bike_customer_acf$acf)
+ggplot(bike_customer_acf_df, aes(x = lag, y = acf)) +
+  geom_col() +
+  labs(title = "Autocorrelation of Customer Usage",
+       subtitle = "Data from http://stat.cmu.edu/315/data/big_bike.csv",
+       x = "Lag", y = "ACF") +
+    eujingc_315_theme
+bike_subscriber_acf_df <- data.frame(lag = bike_subscriber_acf$lag,
+                                   acf = bike_subscriber_acf$acf)
+ggplot(bike_subscriber_acf_df, aes(x = lag, y = acf)) +
+  geom_col() +
+  labs(title = "Autocorrelation of Subscriber Usage",
+       subtitle = "Data from http://stat.cmu.edu/315/data/big_bike.csv",
+       x = "Lag", y = "ACF") +
+    eujingc_315_theme
+```
+
+Seeing that the greatest correlation is at 7 days lag, this indicates a seasonal pattern across weeks where the same day of the week tends to have similar counts, which makes sense as people tend to have weekly schedules.
+
+
+
+***
+***
+
+
+
+
+
+
+
+
+
+***
+***
+
+# Problem 3
+
+
+## a. 
+
+The latitude is 40.4442526, and the longitude is -79.955433.
+
+## b. 
+
+
+```{r}
+cat_long <- -79.955433
+cat_lat <- 40.4442526
+catlearn <- c(left = cat_long - 0.02, bottom = cat_lat - 0.01,
+          right = cat_long + 0.02, top = cat_lat + 0.01)
+
+map_base <- get_stamenmap(catlearn, maptype = "toner-lite", zoom = 15)
+
+map_object <- ggmap(map_base, extent = "device")
+
+map_object2 <- ggmap(map_base) +
+  geom_point(x = cat_long, y = cat_lat, color = "red", size = 5) +
+  labs(x = "Longitude", y = "Latitude")
+
+map_object2
+```
+
+
+## c. 
+
+```{r}
+#  Load and format airports data
+airports <- read_csv("https://raw.githubusercontent.com/jpatokal/openflights/master/data/airports.dat",
+                     col_names = c("ID", "name", "city", "country", "IATA_FAA", 
+                                   "ICAO", "lat", "lon", "altitude", "timezone",
+                                   "DST"))
+
+#  Load and format routes data
+routes <- read_csv("https://raw.githubusercontent.com/jpatokal/openflights/master/data/routes.dat",
+                   col_names = c("airline", "airlineID", "sourceAirport", 
+                                 "sourceAirportID", "destinationAirport", 
+                                 "destinationAirportID", "codeshare", "stops",
+                                 "equipment")) %>%
+  filter(sourceAirportID != "\\N",
+         destinationAirportID != "\\N") %>%
+  mutate(sourceAirportID = as.integer(sourceAirportID),
+         destinationAirportID = as.integer(destinationAirportID))
+
+#  Manipulate the routes data to create two new data.frames
+#    one for arrivals, one for departures.
+#  Each counts the number of flights arriving/departing from each airport.
+departures <- routes %>%
+  group_by(sourceAirportID) %>%
+  summarise(flights = n())
+
+arrivals <- routes %>%
+  group_by(destinationAirportID) %>%
+  summarise(flights = n())
+
+#  Merge each of the arrivals/departures data.frames with the airports data.frame above
+airportD <- left_join(airports, departures, by = c("ID" = "sourceAirportID"))
+airportA <- left_join(airports, arrivals, by = c("ID" = "destinationAirportID"))
+
+#  Create data.frame of routes to/from a specific city
+my_airport_code <- "PIT"
+
+my_routes <- routes %>% filter(sourceAirport == my_airport_code | 
+                               destinationAirport == my_airport_code)
+
+#  Add in relevant information from the airports data.frame
+#  Do this in two steps, so that you first pull in the source airport information
+#  and then pull in the destination airport information
+#  This can be done easily with two calls to left_join()
+#  The rest of the code is just formatting
+my_airport_data <- my_routes %>%
+  left_join(airports, by = c("sourceAirport" = "IATA_FAA")) %>%
+  dplyr::select(destinationAirport, lat, lon, timezone) %>%
+  rename(source_lat = lat, source_lon = lon, source_timezone = timezone) %>%
+  left_join(airports, by = c("destinationAirport" = "IATA_FAA")) %>%
+  dplyr::select(source_lat, source_lon, source_timezone, lat, lon, timezone) %>%
+  rename(dest_lat = lat, dest_lon = lon, dest_timezone = timezone)
+```
+
+
+## d. 
+
+```{r}
+US <- c(left = -125, bottom = 10, right = -67, top = 49)
+map <- get_stamenmap(US, zoom = 5, maptype = "toner-lite")
+
+airport_counts <- my_airport_data %>%
+    group_by(source_lat, source_lon, dest_lat, dest_lon) %>%
+    summarize(count = n())
+
+ggmap(map, extent = "device") +
+    geom_curve(aes(x = source_lon, y = source_lat,
+                   xend = dest_lon, yend = dest_lat,
+                   alpha = count),
+               arrow = arrow(length = unit(0.02, "npc")),
+               data = airport_counts) +
+    coord_cartesian() +
+    labs(x = "Longitude", y = "Latitude",
+         title = "Flight Counts To and From Pittsburgh",
+         alpha = "Count") +
+    eujingc_315_theme
+```
+
+
+***
+***
