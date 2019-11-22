@@ -1,0 +1,126 @@
+---
+title: "36-315 Lab 10"
+author: "Eu Jing Chua"
+date: "Due Friday, Nov 22, 2019 (6:30pm)"
+output: 
+  html_document:
+    toc:  true
+    toc_float:  true
+    code_folding:  show
+---
+
+
+##  Lab 10
+
+
+
+
+
+
+#  Problem 1
+
+(10 points)
+
+Briefly describe the dataset you are working on with your team.
+
+
+
+***
+***
+
+
+
+
+
+
+***
+***
+
+
+#  Problem 2
+
+(a)  The other functions listed with `png()` are `bmp(), jpeg(), tiff()`
+
+(b)  We can control the height and width of images in the `pdf()` function with the width and height parameter, which is in inces.
+
+(c)  We can control the height and width of images in the `png()` function with the width and height parameter, which is in pixels by default.
+
+(d)  We can save images with `ggsave()` as png, eps, ps, tex, pdf, jpeg, tiff, png, bmp, svg, or wmf.
+
+(e)  The dpi parameter controls the plot resolution, which is dots per inch.
+
+***
+***
+
+
+# Problem 3
+
+**Create Your Own Shiny App**
+
+(80 points)
+
+
+**You do not need to turn in this Problem. Just upload it to ShinyApps.io and provide a link as described in part (d) below.**
+
+
+a.  (30 points) Go the the following
+[link](https://shiny.rstudio.com/gallery/faithful.html), you'll see
+the `ui.R` and `server.R` code.  Make a copy of these on your own
+computer.  Edit them so that they use `ggplot()` to create the
+histogram, density estimate, and rug plot.  Ensure that all of the
+existing interactive features are functional in your new version.
+
+b.  (20 points) Using the `faithful` dataset, create two additional
+graphics using the two variables in the `faithful` dataset:
+
++ Graph 1: A scatterplot of `eruptions` vs. `waiting`.  The graph
+should be interactive in some way -- e.g. let the user specify the
+point size with a slider, let the user check a box to add a trend line
+(e.g. with `geom_smooth()`) to the plot, etc.
+
++ Graph 2: A 2-D density estimate of `eruptions` vs. `waiting`,
+displayed as a heat map or a contour plot.  The graph should be
+interactive in some way -- e.g. let the user to change the bandwidth
+in each direction, let the user click a checkbox to add or remove the
+points or contour lines, etc.
+
+c.  (25 points)  Organize your app as follows:  
+
++  Include a dashboard in your app (see [here](https://rstudio.github.io/shinydashboard/get_started.html)).  
++  Separate part (a) and part (b) into their own menu items in the sidebar (i.e. one menu item for part (a), one for part (b)).
++  Put each graph in part (b) into its own tab (see [here](http://shiny.rstudio.com/articles/tabsets.html)).
+
+d.  (5 points) Create a free account on
+[ShinyApps.io](www.ShinyApps.io).  Upload your working ShinyApp to
+this public website.  Make note of the public link at which your
+ShinyApp can be accessed.
+Provide the link here.
+
+
+***
+***
+
+
+
+
+
+#  Shiny Resources
+
+Below is a list of resources with information on creating Shiny Apps.
+
++  [RStudio's Shiny Page](http://shiny.rstudio.com/).
++  [RStudio's Shiny Tutorials](http://shiny.rstudio.com/tutorial/).
++  [RStudio's Shiny Gallery (example Shiny apps, with source code)](http://shiny.rstudio.com/gallery/).
++  [RStudio's list of Shiny functions with descriptions](http://shiny.rstudio.com/reference/shiny/latest/).
++  [GitHub repository for Shannon and Lee's 1st-place public health hackathon Shiny App](https://github.com/shannong19/hackathon).  See the `server.R`, `ui.R`, and `global.R` files.
+
+
+
+
+
+
+
+***
+***
+
+
